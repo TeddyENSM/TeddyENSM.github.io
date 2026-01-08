@@ -2,79 +2,264 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Portfolio d'Architecture Navale - Teddy (ENSM)</title>
-   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Architecture Navale | Teddy (ENSM)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-    /* Styles maritimes */
-    body {
-        /* Fond: Bleu très clair (ciel ou vague) */
-        background-color: #f0f8ff; 
-        font-family: 'Georgia', serif; /* Police classique et élégante */
-        color: #333;
-        line-height: 1.6;
-        margin: 0;
-        padding: 0;
-        text-align: center; /* Centrer le contenu principal */
-    }
-    
-    header {
-        background-color: navy; /* Couleur du Navy */
-        color: white;
-        padding: 30px 0;
-        margin-bottom: 20px 0;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Ombre pour l'effet de profondeur */
-    }
-    
-    h1 {
-        font-size: 2.5em;
-        margin: 0;
-    }
-    
-    h2 {
-        color: #007bff; /* Bleu océan/vif pour les sous-titres */
-        border-bottom: 3px solid #ccc; /* Ligne de séparation */
-        display: inline-block; /* Pour que la bordure ne prenne que la largeur du texte */
-        padding-bottom: 5px;
-    }
-    
-    .content-section {
-        width: 80%;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: white; /* Fond blanc des cartes ou rapports */
-        border-radius: 8px; /* Coins arrondis pour l'élégance */
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: left; /* Aligner le contenu à gauche */
-    }
+        /* --- CONFIGURATION GLOBALE (STYLE MATERIAL) --- */
+        :root {
+            --primary-color: #0e2a47; /* Bleu Marine Profond (Coque) */
+            --accent-color: #0088cc;  /* Bleu Cyan (Eau/Ciel) */
+            --text-color: #2c3e50;
+            --bg-color: #f5f7fa;
+            --sidebar-width: 280px;
+        }
 
-    a {
-        color: #dc3545; /* Rouge d'une bouée de sauvetage ou d'un danger */
-        text-decoration: none;
-    }
-    a:hover {
-        text-decoration: underline;
-    }
-</style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
 
+        /* --- BARRE LATÉRALE (SIDEBAR) --- */
+        nav.sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid #e0e0e0;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
+
+        .profile-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 10px 0 5px 0;
+        }
+
+        .profile-role {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            transition: background 0.2s, color 0.2s;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: #e3f2fd; /* Bleu très pâle */
+            color: var(--primary-color);
+        }
+
+        /* --- CONTENU PRINCIPAL --- */
+        main.content {
+            margin-left: var(--sidebar-width);
+            padding: 40px 60px;
+            flex-grow: 1;
+            max-width: 900px;
+        }
+
+        /* --- TYPOGRAPHIE & ÉLÉMENTS --- */
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 40px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: "#";
+            color: var(--accent-color);
+            margin-right: 10px;
+            font-weight: 300;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 30px;
+            font-weight: 500;
+        }
+
+        p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* --- BOITES & CARTES (STYLE DOCUMENTATION) --- */
+        .card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-download {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn-download:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* --- ADMONITIONS (BOITES D'INFO) --- */
+        .admonition {
+            background-color: #e8f4fd;
+            border-left: 5px solid var(--accent-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .admonition-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* --- IMAGES & CODE --- */
+        img {
+            max-width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        
+        .math-block {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            border: 1px solid #eee;
+        }
+
+        /* RESPONSIVE (MOBILE) */
+        @media (max-width: 768px) {
+            nav.sidebar { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid #ddd; }
+            main.content { margin-left: 0; padding: 20px; }
+            body { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
 
-    <header>
-    <h1>Portfolio d'Architecture Navale</h1>
-    <a href="index.html">
-        <img src="compas.png" " style="width: 80px; height: 80px; margin-top: 15px; border-radius: 50%;">
-    </a>
-    <h2>Teddy GUILLEMOT - Étudiant ENSM Nantes (Ecole Nationale Superieur Maritime)
-    Cycle Ingénieur
-    </h2>
-    <p>Ce site présente mes travaux, analyses théoriques et projets de simulation numérique liés au domaine maritime. Vous y retrouverez l'ensemble de mes avancés durant mon cycle d'ingénieur</p>
-    <p>Chapitre 1 - Théorie de la Stabilité des navires.</p>
-    <p>Consultez mon projet de prépa sur : 
-        <a href="tipe-stabilite.pdf" target="_blank">Stabilité des Navires (Rapport Intégré)</a>
-    </p>
-    <p>Prochainement : Chapitre 2 - Résistance à l'avancement des navires (modélisation OpenFOAM)
-    <p>Prochainement : Chapitre 3 - Article scientifique sur l'architecture navale (Anglais/Français) & résumé 
-    </p>
+    <nav class="sidebar">
+        <div class="profile-section">
+            <div class="profile-name">Teddy GUILLEMOT</div>
+            <div class="profile-role">Élève Ingénieur ENSM</div>
+            <div style="font-size: 0.8rem; margin-top:5px; color:#aaa;">Portfolio Académique</div>
+        </div>
+        <div class="nav-links">
+            <a href="#intro" class="active">Introduction</a>
+            <a href="#chap1">Chapitre 1 : Stabilité</a>
+            <a href="#chap2">Chapitre 2 : Aérodynamique</a>
+            <a href="#">Chapitre 3 : (À venir)</a>
+        </div>
+    </nav>
+
+    <main class="content">
+        
+        <section id="intro">
+            <h1>Portfolio d'Architecture Navale</h1>
+            <p>
+                Bienvenue sur mon espace de documentation technique. Ce site regroupe mes projets de recherche, mes codes de simulation et mes analyses théoriques développés durant mon cursus à l'<strong>École Nationale Supérieure Maritime (ENSM)</strong>.
+            </p>
+            <div class="admonition">
+                <span class="admonition-title">📘 Objectif du site</span>
+                Partager des ressources techniques sur la stabilité des navires, l'hydrodynamique et la performance des voiliers.
+            </div>
+        </section>
+
+        <section id="chap1">
+            <h2>Chapitre 1 : Stabilité des Navires</h2>
+            <p>
+                Étude approfondie de la stabilité statique et dynamique, avec une focalisation sur les systèmes de stabilisation actifs (cuves anti-roulis).
+            </p>
+            
+            <div class="card">
+                <h3>📄 Rapport de Recherche (TIPE)</h3>
+                <p>Analyse complète des couples de redressement et simulation Python des carènes.</p>
+                <p><strong>Résultat clé :</strong> Réduction du temps de stabilisation de 20s à 4s grâce au système actif.</p>
+                <a href="tipe-stabilite.pdf" class="btn-download" target="_blank">Ouvrir le PDF complet</a>
+            </div>
+        </section>
+
+        <section id="chap2">
+            <h2>Chapitre 2 : Propulsion vélique : écoulements et forces</h2>
+            <p>
+                Modélisation des interactions fluide-structure pour comprendre la propulsion vélique. Basé sur l'approche de Bernoulli et les théories de portance.
+            </p>
+
+            <div class="card">
+                <h3>📄 Comprendre le vélique</h3>
+                <p>Schéma et analyse : portance, propulsion, aérodynamiques & rendements d'une voile
+                <a href="La propulsion vélique_.pdf" class="btn-download" target="_blank">Ouvrir le PDF complet</a>
+            </div>
+        </section>
+       
+
+       
+       <section id="chap3">
+           <h2><p>Prochainement : Chapitre 3 - Résistance à l'avancement des navires (modélisation OpenFOAM)
+           </p>
+       </section>
+
+       <section id="chap4">
+           <h2><p>Prochainement : Chapitre 4 - Article scientifique sur l'architecture navale (Anglais/Français) & résumé 
+           </p>
+       </section>
 </header>
 </body>
 </html>
