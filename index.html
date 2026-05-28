@@ -1,262 +1,339 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Architecture Navale | Teddy (ENSM) </title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CONFIGURATION GLOBALE (STYLE MATERIAL) --- */
+        :root {
+            --primary-color: #0e2a47; /* Bleu Marine Profond (Coque) */
+            --accent-color: #0088cc;  /* Bleu Cyan (Eau/Ciel) */
+            --text-color: #2c3e50;
+            --bg-color: #f5f7fa;
+            --sidebar-width: 280px;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
 
-<title>Portfolio ENSM - Teddy Guillemot</title>
+        /* --- BARRE LATÉRALE (SIDEBAR) --- */
+        nav.sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid #e0e0e0;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+        .profile-section {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+        }
 
-<style>
+        .profile-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 10px 0 5px 0;
+        }
 
-/* --- STYLE GLOBAL --- */
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    background: #f8fafc;
-    color: #2c3e50;
-}
+        .profile-role {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
 
-.container {
-    display: flex;
-}
+        .nav-links a {
+            display: block;
+            padding: 12px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            transition: background 0.2s, color 0.2s;
+            font-weight: 500;
+        }
 
-/* --- SIDEBAR --- */
-.sidebar {
-    width: 260px;
-    background: white;
-    border-right: 1px solid #ddd;
-    padding: 20px;
-    position: fixed;
-    height: 100%;
-}
+        .nav-links a:hover, .nav-links a.active {
+            background-color: #e3f2fd; /* Bleu très pâle */
+            color: var(--primary-color);
+        }
 
-.sidebar h2 {
-    color: #0e2a47;
-}
+        /* --- CONTENU PRINCIPAL --- */
+        main.content {
+            margin-left: var(--sidebar-width);
+            padding: 40px 60px;
+            flex-grow: 1;
+            max-width: 900px;
+        }
 
-.sidebar a {
-    display: block;
-    margin: 10px 0;
-    text-decoration: none;
-    color: #2c3e50;
-}
+        /* --- TYPOGRAPHIE & ÉLÉMENTS --- */
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
 
-.sidebar a:hover {
-    color: #0088cc;
-}
+        h2 {
+            color: var(--primary-color);
+            margin-top: 40px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
 
-/* --- CONTENU --- */
-.content {
-    margin-left: 280px;
-    padding: 40px;
-    max-width: 900px;
-}
+        h2::before {
+            content: "#";
+            color: var(--accent-color);
+            margin-right: 10px;
+            font-weight: 300;
+        }
 
-/* --- TITRES --- */
-h1, h2 {
-    color: #0e2a47;
-}
+        h3 {
+            color: #34495e;
+            margin-top: 30px;
+            font-weight: 500;
+        }
 
-h2 {
-    margin-top: 50px;
-}
+        p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
 
-/* --- CARDS --- */
-.card {
-    background: white;
-    padding: 20px;
-    margin: 20px 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-}
+        /* --- BOITES & CARTES (STYLE DOCUMENTATION) --- */
+        .card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
 
-/* --- BOUTONS --- */
-.btn {
-    display: inline-block;
-    padding: 10px 18px;
-    margin-top: 10px;
-    background: #0e2a47;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-}
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
 
-.btn:hover {
-    background: #0088cc;
-}
+        .btn-download {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 10px;
+        }
 
-</style>
+        .btn-download:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* --- ADMONITIONS (BOITES D'INFO) --- */
+        .admonition {
+            background-color: #e8f4fd;
+            border-left: 5px solid var(--accent-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .admonition-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* --- IMAGES & CODE --- */
+        img {
+            max-width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+       
+        .math-block {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            border: 1px solid #eee;
+        }
+
+        /* RESPONSIVE (MOBILE) */
+        @media (max-width: 768px) {
+            nav.sidebar { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid #ddd; }
+            main.content { margin-left: 0; padding: 20px; }
+            body { flex-direction: column; }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
+    <nav class="sidebar">
+        <div class="profile-section">
+            <div class="profile-name">Teddy GUILLEMOT  </div>
+            <div class="profile-role">Élève Ingénieur ENSM - Architecture Navale   </div>
+            <div style="font-size: 0.8rem; margin-top:5px; color:#aaa;">Portfolio Académique</div>
+        </div>
+        <div class="nav-links">
+            <a href="#intro" class="active">Introduction</a>
+            <a href="#chap1">Stabilité </a>
+            <a href="#chap2">Aérodynamique </a>
+            <a href="#chap3">Construction & Description </a>
+            <a href="#chap4">Résistance à l'avancement des navires (modélisation OpenFOAM)</a>
+            <a href="#chap5">CFD</a>
+            <a href="#chap6">Automatique</a>
 
-<div class="sidebar">
-<h2>Teddy Guillemot</h2>
-<p>Élève Ingénieur ENSM 🚢</p>
+        </div>
+    </nav>
 
-#introIntroduction</a>
-#chap1Stabilité</a>
-#chap2Aérodynamique</a>
-#chap3Construction</a>
-#chap4Résistance (Rhino)</a>
-#cfdCFD</a>
-#autoAutomatique</a>
 
-</div>
 
-<div class="content">
+    <main class="content">
 
-<!-- INTRO -->
-<section id="intro">
-<h1>Portfolio Académique ENSM</h1>
+       
+        <section id="intro">
+            <h1>Portfolio d'Architecture Navale</h1>
+            <p>
+                Bienvenue sur mon espace de documentation technique. Ce site regroupe mes projets de recherche, mes codes de simulation et mes analyses théoriques développés durant mon cursus à l'<strong>École Nationale Supérieure Maritime (ENSM)</strong>.
+            </p>
+            <div class="admonition">
+                <span class="admonition-title">Objectif du site</span>
+                Partager des ressources techniques sur la stabilité des navires, l'hydrodynamique et la performance des voiliers et encore plus..
+            </div>
+        </section>
 
-<p>
-Ce site regroupe mes travaux réalisés à l’ENSM en architecture navale, mécanique des fluides et automatique.
-</p>
+        <section id="chap1">
+            <h2>Stabilité des Navires</h2>
+            <p>
+                Étude approfondie de la stabilité statique et dynamique, avec une focalisation sur les systèmes de stabilisation actifs (cuves anti-roulis).
+            </p>
+           
+            <div class="card">
+                <h3>Rapport de Recherche (TIPE)</h3>
+                <p>Analyse complète des couples de redressement et simulation Python des carènes.</p>
+                <p><strong>Résultat clé :</strong>Simulation de différents stabilisateurs sur une liaison pivot => limite à l'interprétation (modèle reduit, liaison pivot) </p>
+                <a href="tipe-stabilisation.pdf" class="btn-download" target="_blank">MCOT stabilisation</a>
+                <a href="presentation-tipe.pdf" class="btn-download" target="_blank">Présentation TIPE</a>
+            </div>
+        </section>
 
-</section>
 
-<!-- CHAP 1 -->
-<section id="chap1">
-<h2>Stabilité des navires</h2>
+        <section id="chap2">
+            <h2>Propulsion vélique : écoulements et forces</h2>
+            <p>
+                Modélisation des interactions fluide-structure pour comprendre la propulsion vélique. Basé sur l'approche de Bernoulli et les théories de portance.
+            </p>
 
-<div class="card">
-<h3>Projet TIPE - Stabilisation du roulis</h3>
+            <div class="card">
+                <h3>Comprendre le vélique</h3>
+                <p>Schéma et analyse : portance, propulsion, aérodynamiques, rendements, rotor flettner, voile</p>
+                <a href="propulsionvelique.pdf" class="btn-download" target="_blank">Propulsion vélique</a>
+            </div>
+        </section>
+       
 
-<p>
-Étude approfondie de la stabilité statique et dynamique d’un navire.  
-Le travail est basé sur la modélisation du roulis et l’analyse des stabilisateurs.
-</p>
+       <section id="chap3">
+            <h2>Construction & Description</h2>
+            <p>
+                Ce chapitre explore les étapes de fabrication et les choix structuraux qui définissent la solidité d'un navire
+            </p>
 
-<p>
-Résultat : compréhension des limites du modèle simplifié et de l’impact des choix mécaniques sur la stabilité.
-</p>
+            <div class="card">
+                <h3>Matériaux et Protection, Architecture Structurelle, Processus Industriel</h3>
+                <p>Analyse des aciers navals et des systèmes de protection contre la corrosion par anodes sacrificielles
+                   Etude du vocabulaire
+                   Cycle de construction</p>
+                <a href="construction-navale.pdf" class="btn-download" target="_blank">Desription et construction</a>
+             </div>
+         </section>
 
-tipe-stabilisation.pdf class="btn" target="_blank">Voir le projet</a>
 
-</div>
-</section>
 
-<!-- CHAP 2 -->
-<section id="chap2">
-<h2>Aérodynamique / Vélique</h2>
+       <section id="chap4">
+           <h2>Résistance à l'avancement des navires (modélisation OpenFOAM)</h2>
 
-<div class="card">
-<h3>Propulsion vélique</h3>
+           <p>
+      Dans ce chapitre je montre ma première approche de rhinocéros3D ainsi que de la modélisation avec OpenFOAM
+           </p>
+           <div class="card">
+                <h3>Conception 3D : De la géométrie 3D au maillage Hydrodynamique</h3>
+                <p>Avant de lancer les calculs sous OpenFOAM, ce rapport détaille la construction de la carène sous Rhinoceros 3D.
+                Passage du plan de lignes 2D au volume 3D et un surfaçage par balayage (sweep).
+                Eviter les turbulences numériques et préparer un bon maillage, indispensable pour obtenir des résultats de résistance à l'avancement cohérent.
+                Des tutoriels sur Rhinocéros3D m'ont permis de prendre en main le logiciel avec une approche simplifié.</p>
+                <a href="avancementrhinov1.pdf" class="btn-download" target="_blank">Conception Rhino 3D</a>
+             </div>
+       </section>
 
-<p>
-Étude des interactions fluide/structure et des forces aérodynamiques sur les voiles.
-</p>
+       <section id="chap6">
+           <h2>CFD i3
 
-propulsionvelique.pdf class="btn" target="_blank">Voir PDF</a>
+           <p>
+           Mécanique des fluides
+           </p>
+           <div class="card">
+                <h3>TP Poiseuille - OPENFOAM</p>                                
+                <p>Première prise en main des simulations CFD avec OpenFOAM. 
+                   Ce travail avait pour objectif de comprendre les notions fondamentales : 
+                   écoulement laminaire, conditions aux limites et convergence numérique.</p>
+                <a href="tppoiseuille.pdf" class="btn-download" target="_blank">CFD</a>
+             </div>
+       </section>
 
-</div>
-</section>
 
-<!-- CHAP 3 -->
-<section id="chap3">
-<h2>Construction navale</h2>
 
-<div class="card">
-<h3>Matériaux et structure</h3>
+       <section id="chap6">
+           <h2>Automatique i3
 
-<p>
-Analyse des matériaux, de la corrosion et des méthodes de construction des navires.
-</p>
+           <p>
+           DM1 - Stabilisation du roulis
+           </p>
+           <div class="card">
+                <h3>Compte rendu et énoncé</p>
+                <p>Travail réalisé sur une maquette expérimentale avec gyrostabilisateur.
+                   L'objectif était de stabiliser le roulis en implémentant des lois de commande
+                   (proportionnelle puis proportionnelle-dérivée).</p>
+                <a href="dm1automatique.pdf" class="btn-download" target="_blank">Compte rendu</a>
+                <a href="dm1enonce.pdf" class="btn-download" target="_blank">Enoncé</a>
+           <p>
+           DM2 - Asservissement de vitesse
+           </p>
+           <div class="card">
+                <h3>Compte rendu et énoncé</p>
+                <p>Étude d’un système sur maquette permettant d’analyser un correcteur PI et une action de tendance (feedforward) pour améliorer le suivi de consigne.</p>
+                <a href="dm2automatique.pdf" class="btn-download" target="_blank">Compte rendu</a>
+                <a href="dm2enonce.pdf" class="btn-download" target="_blank">Enoncé</a>
+           </div>
+       </section>
 
-construction-navale.pdf class="btn" target="_blank">Voir PDF</a>
 
-</div>
-</section>
-
-<!-- CHAP 4 -->
-<section id="chap4">
-<h2>Résistance à l'avancement (Rhino + modélisation)</h2>
-
-<div class="card">
-<h3>Conception 3D de carène</h3>
-
-<p>
-Première approche de Rhino3D pour modéliser une carène.  
-Passage du plan de lignes 2D vers une géométrie 3D exploitable en calcul CFD.
-</p>
-
-<p>
-Ce travail m’a permis de comprendre l’importance du maillage et des géométries propres pour éviter les erreurs numériques.
-</p>
-
-avancementrhinov1.pdf class="btn" target="_blank">Voir le projet</a>
-
-</div>
-
-</section>
-
-<!-- CFD -->
-<section id="cfd">
-<h2>CFD - OpenFOAM</h2>
-
-<div class="card">
-<h3>TP Poiseuille</h3>
-
-<p>
-Première prise en main de la simulation CFD avec OpenFOAM. Objectif : comprendre les notions de base (écoulement laminaire, conditions aux limites, convergence).
-</p>
-
-<p>
-Travail réalisé sur plusieurs séances avec analyse des résultats et rédaction d’un compte rendu scientifique.</p>
-
-documents/cfd/tppoiseuille.pdf class="btn" target="_blank">Voir PDF</a>
-
-</div>
-
-</section>
-
-<!-- AUTOMATIQUE -->
-<section id="auto">
-<h2>Automatique</h2>
-
-<div class="card">
-<h3>DM1 - Stabilisation gyroscopique</h3>
-
-<p>
-Étude d’un système réel sur maquette avec gyrostabilisateur pour stabiliser le roulis d’un navire. 
-</p>
-
-<p>
-Implémentation de lois de commande P et PD avec analyse expérimentale.
-</p>
-
-documents/automatique/dm1automatique.pdf class="btn">Compte rendu</a>
-documents/automatique/enonce1automatique.pdf class="btn">Énoncé</a>
-
-</div>
-
-<div class="card">
-<h3>DM2 - Asservissement de vitesse</h3>
-
-<p>
-Travail sur maquette permettant d’implémenter un correcteur PI et une action de tendance (feedforward).
-</p>
-
-<p>
-Objectif : améliorer le suivi de consigne et la précision du système.
-</p>
-
-documents/automatique/dm2automatique.pdf class="btn">Compte rendu</a>
-documents/automatique/enonce2automatique.pdf class="btn">Énoncé</a>
-
-</div>
-
-</section>
-
-</div>
-</div>
-
+</header>
 </body>
 </html>
-``
