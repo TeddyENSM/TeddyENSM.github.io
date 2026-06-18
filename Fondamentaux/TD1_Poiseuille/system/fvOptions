@@ -1,0 +1,31 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Gradient de pression imposé via une force volumique équivalente.
+// Exemple ici: cible laminaire Umax ~ 0.15 m/s, donc Ubar = 0.1 m/s
+// meanVelocityForce ajuste la force pour atteindre la vitesse cible Ubar.
+
+momentumSource
+{
+    type            meanVelocityForce;
+    active          no;
+    selectionMode   all;
+    fields          (U);
+
+    // Vitesse débitante cible (moyenne section): Ubar = 0.1 m/s
+    // (correspondant a Umax ~ 0.15 m/s pour un profil de Poiseuille developpe)
+    Ubar            (0.1 0 0);
+}
+
+// ************************************************************************* //

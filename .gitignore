@@ -1,0 +1,9 @@
+run/
+venv/
+__pycache__/
+*.pyc
+*.log
+log.*
+*.vtp
+*.vtk
+*.foam

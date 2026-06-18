@@ -1,0 +1,93 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Paramètres géométriques
+L    0.1;    // longueur du canal [m]
+H    0.01;   // hauteur du canal  [m]
+e    0.001;  // épaisseur (1 cellule en z) [m]
+
+// Nombre de cellules
+Nx   100;
+Ny   40;
+Nz   1;
+
+// Grading en y : raffinement aux parois (ratio = cellule_max/cellule_min)
+gradY 6;
+
+scale   1;
+
+vertices
+(
+    ( 0   0   0   )   // 0
+    ( $L  0   0   )   // 1
+    ( $L  $H  0   )   // 2
+    ( 0   $H  0   )   // 3
+    ( 0   0   $e  )   // 4
+    ( $L  0   $e  )   // 5
+    ( $L  $H  $e  )   // 6
+    ( 0   $H  $e  )   // 7
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7)
+    ( $Nx $Ny $Nz )
+    simpleGrading
+    (
+        1           // x : pas de grading
+        (           // y : grading symétrique (paroi basse + paroi haute)
+            (0.5 0.5 $gradY)
+            (0.5 0.5 #calc "1.0/$gradY")
+        )
+        1           // z : pas de grading
+    )
+);
+
+boundary
+(
+    inlet
+    {
+        type    patch;
+        faces   ( (0 3 7 4) );
+    }
+    outlet
+    {
+        type    patch;
+        faces   ( (1 2 6 5) );
+    }
+    bottom
+    {
+        type    wall;
+        faces   ( (0 1 5 4) );
+    }
+    top
+    {
+        type    wall;
+        faces   ( (3 2 6 7) );
+    }
+    front
+    {
+        type    empty;
+        faces   ( (0 1 2 3) );
+    }
+    back
+    {
+        type    empty;
+        faces   ( (4 5 6 7) );
+    }
+);
+
+// ************************************************************************* //

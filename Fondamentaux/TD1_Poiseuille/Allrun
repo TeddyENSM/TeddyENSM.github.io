@@ -1,0 +1,11 @@
+#!/bin/bash
+cd "${0%/*}" || exit 1
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+
+echo "=== TD1 Poiseuille — OpenFOAM v2412 ==="
+
+blockMesh   2>&1 | tee log.blockMesh
+checkMesh   2>&1 | tee log.checkMesh
+icoFoam     2>&1 | tee log.icoFoam
+
+echo "=== Terminé. Lancer : paraFoam & ==="

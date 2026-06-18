@@ -1,0 +1,6 @@
+#!/bin/bash
+cd "${0%/*}" || exit 1
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+
+foamListTimes -rm
+rm -rf constant/polyMesh log.* postProcessing
