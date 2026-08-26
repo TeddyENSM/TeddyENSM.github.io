@@ -1,0 +1,141 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+geometry
+{
+    NACA0012.stl
+    {
+        type    triSurfaceMesh;
+        name    wing;
+    }
+
+    refinementBox
+    {
+        type    searchableBox;
+        min     (-2 -1 -1);
+        max     ( 4  1  1);
+    }
+}
+
+castellatedMeshControls
+{
+    maxLocalCells           1000000;
+    maxGlobalCells          2000000;
+    minRefinementCells      10;
+    nCellsBetweenLevels     4;        // transition douce entre niveaux
+    maxLoadUnbalance        0.10;
+
+    resolveFeatureAngle 30;
+
+    features
+    (
+        {
+            file    "NACA0012.eMesh";
+            level   5;
+        }
+    );
+
+    refinementSurfaces
+    {
+        wing
+        {
+            level (5 5);
+        }
+    }
+
+    refinementRegions
+    {
+        refinementBox
+        {
+            mode    inside;
+            levels  ((1E15 2));
+        }
+    }
+
+    locationInMesh (0.0 0.0 0.0);   // point dans le domaine fluide (hors profil)
+    allowFreeStandingZoneFaces false;
+}
+
+snapControls
+{
+    nSmoothPatch        3;
+    tolerance           2.0;
+    nSolveIter          100;
+    nRelaxIter          5;
+    nFeatureSnapIter    10;
+    implicitFeatureSnap false;
+    explicitFeatureSnap true;
+    multiRegionFeatureSnap false;
+}
+
+addLayersControls
+{
+    relativeSizes       false;
+
+    layers
+    {
+        wing
+        {
+            nSurfaceLayers  3;
+        }
+    }
+
+    expansionRatio          1.3;
+    firstLayerThickness     0.0015;   // [m] — viser y+ ≈ 50 à U=100 m/s
+    minThickness            0.0001;
+    nGrow                   0;
+
+    featureAngle            60;
+    slipFeatureAngle        30;
+    nRelaxIter              5;
+    nSmoothSurfaceNormals   1;
+    nSmoothNormals          3;
+    nSmoothThickness        10;
+    maxFaceThicknessRatio   0.5;
+    maxThicknessToMedialRatio 0.3;
+    minMedialAxisAngle      90;
+    nBufferCellsNoExtrude   0;
+    nLayerIter              50;
+}
+
+meshQualityControls
+{
+    maxNonOrtho             65;
+    maxBoundarySkewness     20;
+    maxInternalSkewness     4;
+    maxConcave              80;
+    minVol                  1e-13;
+    minTetQuality           -1e30;
+    minArea                 -1;
+    minTwist                0.01;
+    minDeterminant          0.001;
+    minFaceWeight           0.05;
+    minVolRatio             0.01;
+    minTriangleTwist        -1;
+    nSmoothScale            4;
+    errorReduction          0.75;
+    relaxed
+    {
+        maxNonOrtho         75;
+    }
+}
+
+debug           0;
+mergeTolerance  1e-6;
+
+// ************************************************************************* //

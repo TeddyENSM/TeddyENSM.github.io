@@ -1,0 +1,24 @@
+# Script gnuplot — Résistance voilier 17m
+# Usage : gnuplot Gnuplot_script.txt
+
+set terminal pngcairo size 900,500 enhanced font "Arial,12"
+set output "resistance_voilier.png"
+
+set title "Résistance du voilier 17m — interFoam"
+set xlabel "Temps [s]"
+set ylabel "Résistance Rx [N]"
+
+set xrange [0:100]
+set yrange [-6000:0]
+
+set grid
+set key top right
+
+plot \
+  "filteredF.dat" using 1:2 with lines lw 2 lc rgb "red"   title "Totale R_x", \
+  "filteredF.dat" using 1:3 with lines lw 2 lc rgb "blue"  title "Pression R_{vp}", \
+  "filteredF.dat" using 1:4 with lines lw 2 lc rgb "green" title "Visqueuse R_F"
+
+# Afficher aussi en fenêtre interactive (commenter la ligne terminal/output ci-dessus)
+# set terminal qt
+# replot

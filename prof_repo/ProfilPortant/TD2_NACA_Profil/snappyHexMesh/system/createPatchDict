@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createPatchDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+pointSync false;
+
+patches
+(
+    {
+        name            symFront;
+        patchInfo
+        {
+            type    empty;
+        }
+        constructFrom   patches;
+        patches         (symFront);
+    }
+    {
+        name            symBack;
+        patchInfo
+        {
+            type    empty;
+        }
+        constructFrom   patches;
+        patches         (symBack);
+    }
+);
+
+// ************************************************************************* //

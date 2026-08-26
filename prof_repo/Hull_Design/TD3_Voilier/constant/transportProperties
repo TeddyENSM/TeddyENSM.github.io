@@ -1,0 +1,33 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+phases          (water air);
+
+water
+{
+    transportModel  Newtonian;
+    nu              1.0034e-06;   // [m²/s] eau de mer 15°C
+    rho             1025;         // [kg/m³]
+}
+
+air
+{
+    transportModel  Newtonian;
+    nu              1.48e-05;     // [m²/s]
+    rho             1.225;        // [kg/m³]
+}
+
+sigma           0;               // tension superficielle négligée
+
+// ************************************************************************* //

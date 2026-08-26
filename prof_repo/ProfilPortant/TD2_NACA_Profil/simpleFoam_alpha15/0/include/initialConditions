@@ -1,0 +1,11 @@
+// Conditions initiales et paramètres d'entrée
+// Modifiez ces valeurs pour changer les conditions de simulation
+
+flowVelocity    (96.59258263 25.88190451 0);   // [m/s] — vitesse loin du profil à 15°
+pressure        0;           // [Pa] — pression cinématique de référence
+
+// Turbulence k-ω SST
+// k = 1.5*(I*U)² avec I=0.01 (intensité turbulente 1%)
+// ω = k^0.5 / (Cμ^0.25 * ℓ) avec Cμ=0.09, ℓ=0.07*c, c=1m
+turbulentKE     1.5;          // [m²/s²]
+turbulentOmega  32;          // [1/s]

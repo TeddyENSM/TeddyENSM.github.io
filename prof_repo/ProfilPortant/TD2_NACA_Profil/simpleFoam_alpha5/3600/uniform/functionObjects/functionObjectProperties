@@ -1,0 +1,114 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       dictionary;
+    location    "3600/uniform/functionObjects";
+    object      functionObjectProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+cdf7e925f5746741c316f5fbcf39ad0dfca90775
+{
+    forces
+    {
+        vector
+        {
+            pressureForce   ( -9.578089200000001 883.57929 7.2145608e-19 );
+            viscousForce    ( 8.522888500000001 -0.18655367 -1.3139237e-20 );
+            internalForce   ( 0 0 0 );
+            pressureMoment  ( 552.23706 5.9863057 -661.3877 );
+            viscousMoment   ( -0.11659605 -5.3268053 -0.36739875 );
+            internalMoment  ( 0 0 0 );
+        }
+    }
+    forceCoeffs
+    {
+        scalar
+        {
+            Cd              -0.0006891106158787939;
+            CdPressure      -0.006255078639139367;
+            CdViscous       0.005565968023260573;
+            CdInternal      0;
+            Cd(f)           0.3602239100482486;
+            Cd(f)Pressure   0.357517070392687;
+            Cd(f)Viscous    0.002706839655561526;
+            Cd(f)Internal   0;
+            Cd(r)           -0.3609130206641273;
+            Cd(r)Pressure   -0.3637721490318264;
+            Cd(r)Viscous    0.002859128367699048;
+            Cd(r)Internal   0;
+            Cl              0.5769095445699018;
+            ClPressure      0.5770313755396118;
+            ClViscous       -0.0001218309697100179;
+            ClInternal      0;
+            Cl(f)           0.7206213677711496;
+            Cl(f)Pressure   0.7204423493796783;
+            Cl(f)Viscous    0.0001790183914713283;
+            Cl(f)Internal   0;
+            Cl(r)           -0.1437118232012479;
+            Cl(r)Pressure   -0.1434109738400666;
+            Cl(r)Viscous    -0.0003008493611813463;
+            Cl(r)Internal   0;
+            CmPitch         0.4321665954861988;
+            CmPitchPressure 0.4319266616098725;
+            CmPitchViscous  0.0002399338763263373;
+            CmPitchInternal 0;
+            CmRoll          0.3605684653561879;
+            CmRollPressure  0.3606446097122567;
+            CmRollViscous   -7.614435606876106e-05;
+            CmRollInternal  0;
+            CmYaw           0.0004306941349242468;
+            CmYawPressure   0.003909424149462104;
+            CmYawViscous    -0.003478730014537857;
+            CmYawInternal   0;
+            Cs              -4.625742666110704e-22;
+            CsPressure      -4.711549926373437e-22;
+            CsViscous       8.580726026273365e-24;
+            CsInternal      0;
+            Cs(f)           0.0004306941349242468;
+            Cs(f)Pressure   0.003909424149462104;
+            Cs(f)Viscous    -0.003478730014537857;
+            Cs(f)Internal   0;
+            Cs(r)           -0.0004306941349242468;
+            Cs(r)Pressure   -0.003909424149462104;
+            Cs(r)Viscous    0.003478730014537857;
+            Cs(r)Internal   0;
+        }
+    }
+    residuals
+    {
+        scalar
+        {
+            Ux_initial      0.0001743188;
+            Ux_final        1.5468724e-05;
+            Uy_initial      0.00058589055;
+            Uy_final        1.0587835e-05;
+            k_initial       1.2684701e-05;
+            k_final         4.0629352e-07;
+            omega_initial   9.555189399999999e-06;
+            omega_final     3.666346e-07;
+            p_initial       0.0096544326;
+            p_final         0.00069416836;
+        }
+        label
+        {
+            Ux_iters        2;
+            Uy_iters        4;
+            k_iters         4;
+            omega_iters     4;
+            p_iters         1;
+        }
+    }
+}
+
+
+// ************************************************************************* //

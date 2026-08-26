@@ -1,0 +1,43 @@
+#!/bin/bash
+# TD3 Voilier — interFoam multiphase + rigidBodyMotion
+# OpenFOAM v2412 ESI — WSL2
+# Adapter -np au nombre de cœurs disponibles (ici 4)
+
+cd "${0%/*}" || exit 1
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+source /usr/lib/openfoam/openfoam2412/bin/tools/RunFunctions
+
+NP=4   # nombre de processeurs MPI
+
+echo "=== TD3 Voilier — OpenFOAM v2412 ==="
+
+echo "--- Maillage de fond (blockMesh) ---"
+blockMesh 2>&1 | tee log.blockMesh
+
+echo "--- Extraction des arêtes (surfaceFeatureExtract) ---"
+surfaceFeatureExtract 2>&1 | tee log.surfaceFeatureExtract
+
+echo "--- snappyHexMesh ---"
+snappyHexMesh -overwrite 2>&1 | tee log.snappyHexMesh
+
+echo "--- checkMesh ---"
+checkMesh 2>&1 | tee log.checkMesh
+
+echo "--- Initialisation des champs ---"
+restore0Dir
+setFields 2>&1 | tee log.setFields
+
+echo "--- Décomposition parallèle ---"
+decomposePar -force 2>&1 | tee log.decomposePar
+
+echo "--- interFoam (parallèle, ${NP} cœurs) ---"
+mpirun -np $NP interFoam -parallel 2>&1 | tee log.interFoam
+
+echo "--- Reconstruction ---"
+reconstructPar 2>&1 | tee log.reconstructPar
+
+echo "--- Filtrage des forces ---"
+python3 filterForces.py
+
+echo "=== Terminé. Lancer : paraFoam & ==="
+echo "=== Tracé gnuplot : gnuplot Gnuplot_script.txt ==="

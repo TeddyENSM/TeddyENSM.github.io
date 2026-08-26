@@ -1,0 +1,33 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      extrudeMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Reduit le cas 3D (une tranche) en cas 2D avec patches empty
+constructFrom   patch;
+sourceCase      ".";
+sourcePatches   (symFront);
+exposedPatchName symBack;
+
+extrudeModel    linearNormal;
+nLayers         1;
+expansionRatio  1.0;
+
+linearNormalCoeffs
+{
+    thickness   0.25;
+}
+
+flipNormals     false;
+mergeFaces      false;
+
+// ************************************************************************* //

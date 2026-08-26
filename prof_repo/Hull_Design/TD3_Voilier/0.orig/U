@@ -1,0 +1,57 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Référentiel lié au navire → fluide vient de l'avant à U = -3.874 m/s en x
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (-3.874 0 0);
+
+boundaryField
+{
+    inlet
+    {
+        type        fixedValue;
+        value       uniform (-3.874 0 0);
+    }
+
+    outlet
+    {
+        // Sortie libre : zeroGradient en débit sortant, valeur amont si reflux
+        type        inletOutlet;
+        inletValue  uniform (-3.874 0 0);
+        value       uniform (-3.874 0 0);
+    }
+
+    atmosphere
+    {
+        // Frontière supérieure : entrée/sortie libre (vent, vagues)
+        type        pressureInletOutletVelocity;
+        value       uniform (0 0 0);
+    }
+
+    Carena
+    {
+        // Paroi mobile : la vitesse de la paroi suit le mouvement du corps
+        type        movingWallVelocity;
+        value       uniform (0 0 0);
+    }
+
+    sides
+    {
+        type        slip;
+    }
+}
+
+// ************************************************************************* //

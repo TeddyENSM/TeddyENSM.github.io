@@ -1,0 +1,59 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+
+application     postProcess;
+
+startFrom       latestTime;
+startTime       0;
+stopAt          endTime;
+endTime         4000;
+
+deltaT          1;
+
+functions
+{
+    Cp
+    {
+        type            coded;
+        libs            ("libutilityFunctionObjects.so");
+        name            calcCp;
+        
+        executeControl  onEnd;
+        writeControl    onEnd;
+        
+        codeExecute
+        #{
+            const auto& p = mesh_.lookupObject<volScalarField>("p");
+            const auto& U = mesh_.lookupObject<volVectorField>("U");
+            
+            const scalar rho = 1.225;
+            const scalar Uinf = 100.0;
+            const scalar qInf = 0.5 * rho * Uinf * Uinf;
+            
+            volScalarField Cp
+            (
+                IOobject
+                (
+                    "Cp",
+                    mesh_.time().timeName(),
+                    mesh_,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh_,
+                dimensionedScalar(dimless, 0)
+            );
+            
+            Cp = p / qInf;
+            Cp.write();
+            
+            Info<< "Wrote Cp field" << endl;
+        #};
+    }
+}

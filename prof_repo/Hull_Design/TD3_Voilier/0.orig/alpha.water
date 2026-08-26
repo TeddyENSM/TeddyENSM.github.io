@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha.water;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// alpha.water : 0 = air, 1 = eau
+// Champ initial (avant setFields) : tout à 0 (air)
+// setFields remplira z < 0 avec alpha = 1
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {
+        // Inlet = amont du navire = AIR (au-dessus de la flottaison)
+        // La surface libre (alpha=1 sous z=0) est gérée par setFields
+        type        fixedValue;
+        value       uniform 0;
+    }
+
+    outlet
+    {
+        type        variableHeightFlowRate;
+        flowRate    0.0;
+        lowerBound  0;
+        upperBound  1;
+        value       uniform 0;
+    }
+
+    atmosphere
+    {
+        type        inletOutlet;
+        inletValue  uniform 0;
+        value       uniform 0;
+    }
+
+    Carena
+    {
+        type        zeroGradient;
+    }
+
+    sides
+    {
+        type        zeroGradient;
+    }
+}
+
+// ************************************************************************* //

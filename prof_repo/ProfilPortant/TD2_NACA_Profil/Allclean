@@ -1,0 +1,10 @@
+#!/bin/bash
+cd "${0%/*}" || exit 1
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+
+rm -rf snappyHexMesh/constant/{polyMesh,geometry/*.eMesh,triSurface}
+rm -rf snappyHexMesh/log.*
+rm -rf simpleFoam/constant/polyMesh simpleFoam/log.*
+rm -rf pimpleFoam/constant/polyMesh pimpleFoam/log.* pimpleFoam/processor*
+( cd simpleFoam  && foamListTimes -rm 2>/dev/null; true )
+( cd pimpleFoam  && foamListTimes -rm 2>/dev/null; true )

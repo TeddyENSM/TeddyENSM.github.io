@@ -1,0 +1,73 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+// Paramètres géométriques et physiques du voilier
+// Modifiez ce fichier pour adapter à un autre navire.
+
+// Géométrie
+Lpp     17;       // longueur entre perpendiculaires [m]
+Bwl     4.62;     // largeur à la flottaison [m]
+D       1.5;      // creux [m]
+T       1.01;     // tirant d'eau [m]
+
+// Navigation
+U           3.874183785;  // vitesse [m/s]
+rhof        1025;         // densité eau de mer [kg/m³]
+nuf         1.0034e-06;   // viscosité cinématique eau [m²/s]
+
+// Masse et inertie (pour rigidBodyMotion)
+mass        14525;         // [kg]
+Iyy         262357.8125;  // moment d'inertie en tangage [kg·m²]
+CdGx        5.87;          // position LCG depuis la perpendiculaire avant [m]
+
+// Paramètres temporels
+endTimeSim  100;
+maxCo       10;
+maxAlphaCo  5;
+maxDeltaT   0.025;
+
+// Facteurs de domaine (multiples de Lpp/Bwl/T)
+k1  2.5;   // amont
+k2  5.5;   // aval
+k3  3;     // bâbord/tribord (demi-largeur en multiples de Bwl)
+k4  3;     // profondeur sous la quille (multiples de T)
+k5  1.5;   // hauteur au-dessus de la flottaison (multiples de D)
+k6  0.15;  // taille de cellule de fond (fraction de Lpp)
+
+// Dimensions du domaine calculées
+dx  #calc "$k6 * $Lpp";
+
+L1  #calc "-$k1 * $Lpp";
+L2  #calc " $k2 * $Lpp";
+B1  #calc "-$k3 * $Bwl / 2";
+B2  #calc " $k3 * $Bwl / 2";
+D1  #calc "-$k4 * $T";
+D2  #calc " $k5 * $D";
+
+// Nombre de cellules en x, y, z
+Nx  #calc "int(round(($L2 - $L1) / $dx))";
+Ny  #calc "int(round(($B2 - $B1) / $dx))";
+Nz  #calc "int(round(($D2 - $D1) / $dx))";
+
+// Boîtes de raffinement (autour de la carène et de la surface libre)
+// Box0 — sillage proche
+Box0xMin  #calc "-0.1 * $Lpp";
+Box0xMax  #calc " 1.5 * $Lpp";
+Box0yMin  #calc "-0.7 * $Bwl / 2";
+Box0yMax  #calc " 0.7 * $Bwl / 2";
+Box0zMin  #calc "-1.5 * $T";
+Box0zMax  #calc " 0.5 * $D";
+
+// Box1 — sillage étendu
+Box1xMin  #calc "-0.2 * $Lpp";
+Box1xMax  #calc " 2.5 * $Lpp";
+Box1yMin  #calc "-1.2 * $Bwl / 2";
+Box1yMax  #calc " 1.2 * $Bwl / 2";
+Box1zMin  #calc "-2.0 * $T";
+Box1zMax  #calc " 0.8 * $D";
+
+// Box_freeSurface — surface libre (ITTC recommande 3-5 cellules dans dz~λ/100)
+Box_fsZmin  #calc "-0.2 * $T";
+Box_fsZmax  #calc " 0.2 * $D";

@@ -1,0 +1,21 @@
+// Conditions aux limites communes — inclus dans U, p, k, omega, nut
+
+top
+{
+    type        slip;
+}
+
+bottom
+{
+    type        slip;
+}
+
+symFront
+{
+    type        empty;
+}
+
+symBack
+{
+    type        empty;
+}

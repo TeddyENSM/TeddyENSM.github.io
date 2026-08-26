@@ -1,0 +1,7 @@
+#!/bin/bash
+cd "${0%/*}" || exit 1
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+
+foamListTimes -rm 2>/dev/null
+rm -rf constant/polyMesh processor* postProcessing
+rm -f log.* filteredF.dat resistance_voilier.png

@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      k;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// k = 1.5*(I*U)² avec I=0.01, U=3.874 m/s → k ≈ 0.0022 m²/s²
+
+dimensions      [0 2 -2 0 0 0 0];
+
+internalField   uniform 0.0025;
+
+boundaryField
+{
+    inlet
+    {
+        type        fixedValue;
+        value       uniform 0.0025;
+    }
+
+    outlet
+    {
+        type        inletOutlet;
+        inletValue  uniform 0.0025;
+        value       uniform 0.0025;
+    }
+
+    atmosphere
+    {
+        type        inletOutlet;
+        inletValue  uniform 0.0025;
+        value       uniform 0.0025;
+    }
+
+    Carena
+    {
+        type        kqRWallFunction;
+        value       uniform 0.0025;
+    }
+
+    sides
+    {
+        type        slip;
+    }
+}
+
+// ************************************************************************* //

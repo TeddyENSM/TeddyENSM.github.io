@@ -1,0 +1,159 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "initialConditions"
+
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+geometry
+{
+    Carena.stl
+    {
+        type    triSurfaceMesh;
+        name    Carena;
+    }
+
+    // Boîte de raffinement proche carène (sillage immédiat)
+    Box0
+    {
+        type    searchableBox;
+        min     ($Box0xMin  $Box0yMin  $Box0zMin);
+        max     ($Box0xMax  $Box0yMax  $Box0zMax);
+    }
+
+    // Boîte de raffinement sillage étendu (vagues de Kelvin)
+    Box1
+    {
+        type    searchableBox;
+        min     ($Box1xMin  $Box1yMin  $Box1zMin);
+        max     ($Box1xMax  $Box1yMax  $Box1zMax);
+    }
+
+    // Boîte de raffinement surface libre (région z ≈ 0)
+    Box_freeSurface
+    {
+        type    searchableBox;
+        min     (-1000 -1000  $Box_fsZmin);
+        max     ( 1000  1000  $Box_fsZmax);
+    }
+}
+
+castellatedMeshControls
+{
+    maxLocalCells           2000000;
+    maxGlobalCells          5000000;
+    minRefinementCells      10;
+    nCellsBetweenLevels     3;
+    maxLoadUnbalance        0.10;
+    resolveFeatureAngle     30;
+
+    features ();
+
+    refinementSurfaces
+    {
+        Carena
+        {
+            level (4 5);
+            patchInfo
+            {
+                type    wall;
+            }
+        }
+    }
+
+    refinementRegions
+    {
+        Box0            { mode inside; levels ((1E15 3)); }
+        Box1            { mode inside; levels ((1E15 2)); }
+        Box_freeSurface { mode inside; levels ((1E15 3)); }
+    }
+
+    // Point dans le domaine fluide (hors carène, hors surface libre)
+    locationInMesh (#calc "$L1 + 0.3*($L2-($L1))"
+                    0
+                    #calc "0.5*$D2");
+
+    allowFreeStandingZoneFaces false;
+}
+
+snapControls
+{
+    nSmoothPatch        3;
+    tolerance           2.0;
+    nSolveIter          100;
+    nRelaxIter          5;
+    nFeatureSnapIter    10;
+    implicitFeatureSnap true;
+    explicitFeatureSnap false;
+    multiRegionFeatureSnap false;
+}
+
+addLayersControls
+{
+    relativeSizes       false;
+
+    layers
+    {
+        Carena
+        {
+            nSurfaceLayers  4;
+        }
+    }
+
+    expansionRatio          1.3;
+    firstLayerThickness     0.005;   // [m] viser y+ 30-100 à U=3.874 m/s
+    minThickness            0.0001;
+    nGrow                   0;
+
+    featureAngle            60;
+    slipFeatureAngle        30;
+    nRelaxIter              5;
+    nSmoothSurfaceNormals   1;
+    nSmoothNormals          3;
+    nSmoothThickness        10;
+    maxFaceThicknessRatio   0.5;
+    maxThicknessToMedialRatio 0.3;
+    minMedialAxisAngle      90;
+    nBufferCellsNoExtrude   0;
+    nLayerIter              50;
+}
+
+meshQualityControls
+{
+    maxNonOrtho             70;
+    maxBoundarySkewness     20;
+    maxInternalSkewness     4;
+    maxConcave              80;
+    minVol                  1e-13;
+    minTetQuality           -1e30;
+    minArea                 -1;
+    minTwist                0.01;
+    minDeterminant          0.001;
+    minFaceWeight           0.05;
+    minVolRatio             0.01;
+    minTriangleTwist        -1;
+    nSmoothScale            4;
+    errorReduction          0.75;
+    relaxed
+    {
+        maxNonOrtho         75;
+    }
+}
+
+debug           0;
+mergeTolerance  1e-6;
+
+// ************************************************************************* //

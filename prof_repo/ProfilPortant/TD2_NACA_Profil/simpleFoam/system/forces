@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+// Calcul des forces aérodynamiques sur le profil
+// v2412 ESI : "libs (forces);" — sans guillemets ni libforces.so
+
+forces
+{
+    type            forces;
+    libs            (forces);
+
+    patches         (wing);
+    rhoInf          1.225;       // densité de l'air [kg/m³]
+    rho             rhoInf;
+
+    // Centre de moment (bord d'attaque du profil)
+    CofR            (0 0 0);
+
+    writeControl    timeStep;
+    writeInterval   10;
+}
+
+forceCoeffs
+{
+    type            forceCoeffs;
+    libs            (forces);
+
+    patches         (wing);
+    rhoInf          1.225;
+    rho             rhoInf;
+    CofR            (0 0 0);
+
+    liftDir         (0 1 0);
+    dragDir         (1 0 0);
+    pitchAxis       (0 0 1);
+
+    magUInf         100;         // vitesse de référence [m/s]
+    lRef            1.0;         // corde [m]
+    Aref            0.25;        // surface de référence = corde × envergure (0.25 m) [m²]
+
+    writeControl    timeStep;
+    writeInterval   10;
+}
+
+// ************************************************************************* //

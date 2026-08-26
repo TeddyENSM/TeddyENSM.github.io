@@ -1,0 +1,60 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      omega;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// ω = k^0.5 / (Cμ^0.25 * ℓ) avec Cμ=0.09, ℓ=0.07*Lpp=1.19m
+// ω ≈ 0.05^0.5 / (0.09^0.25 * 1.19) ≈ 200 s⁻¹
+
+dimensions      [0 0 -1 0 0 0 0];
+
+internalField   uniform 200;
+
+boundaryField
+{
+    inlet
+    {
+        type        fixedValue;
+        value       uniform 200;
+    }
+
+    outlet
+    {
+        type        inletOutlet;
+        inletValue  uniform 200;
+        value       uniform 200;
+    }
+
+    atmosphere
+    {
+        type        inletOutlet;
+        inletValue  uniform 200;
+        value       uniform 200;
+    }
+
+    Carena
+    {
+        type        omegaWallFunction;
+        Cmu         0.09;
+        kappa       0.41;
+        E           9.8;
+        beta1       0.075;
+        value       uniform 200;
+    }
+
+    sides
+    {
+        type        slip;
+    }
+}
+
+// ************************************************************************* //

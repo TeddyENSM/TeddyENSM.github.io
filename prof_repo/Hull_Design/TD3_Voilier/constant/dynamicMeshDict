@@ -1,0 +1,113 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dynamicFvMesh           dynamicMotionSolverFvMesh;
+
+motionSolverLibs        (rigidBodyMeshMotion);
+motionSolver            rigidBodyMotion;
+
+rigidBodyMotionCoeffs
+{
+    report              yes;
+
+    // Montée progressive de la relaxation pour éviter les oscillations initiales
+    accelerationRelaxation  table
+    (
+        (0   0   )
+        (10  0   )
+        (20  0.15)
+        (50  0.3 )
+        (100 0.3 )
+    );
+
+    solver
+    {
+        type    Newmark;
+    }
+
+    bodies
+    {
+        Carena
+        {
+            type            rigidBody;
+            parent          root;
+
+            // Masse et inertie (diagonale du tenseur en kg·m²)
+            mass            14525;
+            inertia         ( 40 0 0   262400 0   262400 );
+
+            // Centre de masse dans le référentiel local du corps (à l'origine)
+            centreOfMass    (0 0 0);
+
+            // Transformation initiale : rotation identité + translation au CdG
+            // (CdGx = 5.87 m depuis la PP avant, z=0.5 m sous la flottaison)
+            transform       (1 0 0  0 1 0  0 0 1) (5.87 0 0.5);
+
+            innerDistance   1;
+            outerDistance   5;
+
+            joint
+            {
+                type    composite;
+                joints
+                (
+                    // Pilonnement (heave) : translation en z
+                    { type Pz; }
+                    // Tangage (pitch)  : rotation autour de y
+                    { type Ry; }
+                );
+            }
+        }
+    }
+
+    constraints
+    {
+        // Bloquer la dérive latérale
+        lateralConstraint
+        {
+            type    line;
+            body    Carena;
+            axis    (0 0 1);    // autoriser uniquement mouvement en z
+        }
+
+        // Bloquer le roulis
+        rollConstraint
+        {
+            type    axis;
+            body    Carena;
+            axis    (0 1 0);    // autoriser uniquement rotation autour de y
+        }
+    }
+
+    restraints
+    {
+        // Amortisseur linéaire en pilonnement (évite oscillations numériques)
+        heave_damper
+        {
+            type                linearDamper;
+            body                Carena;
+            coeff               8596;   // [N·s/m]
+        }
+
+        // Amortisseur angulaire en tangage
+        pitch_damper
+        {
+            type                sphericalAngularDamper;
+            body                Carena;
+            coeff               11586;  // [N·m·s/rad]
+        }
+    }
+}
+
+// ************************************************************************* //

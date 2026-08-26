@@ -1,0 +1,72 @@
+#!/bin/bash
+# TD2 NACA-0012 — Pipeline complet : maillage + simpleFoam + pimpleFoam
+# OpenFOAM v2412 ESI
+
+cd "${0%/*}" || exit 1
+source /usr/lib/openfoam/openfoam2412/etc/bashrc
+source /usr/lib/openfoam/openfoam2412/bin/tools/RunFunctions
+
+echo "=== TD2 NACA-0012 — OpenFOAM v2412 ==="
+
+# --- Copier la géométrie ---
+mkdir -p snappyHexMesh/constant/triSurface
+mkdir -p snappyHexMesh/constant/geometry
+cp geometry/NACA0012.stl snappyHexMesh/constant/triSurface/
+cp geometry/NACA0012.stl snappyHexMesh/constant/geometry/
+
+# ============================================================
+# ÉTAPE 1 : Maillage snappyHexMesh
+# ============================================================
+echo "--- Maillage de fond (blockMesh) ---"
+( cd snappyHexMesh && blockMesh 2>&1 | tee log.blockMesh )
+
+echo "--- Extraction des arêtes (surfaceFeatureExtract) ---"
+( cd snappyHexMesh && surfaceFeatureExtract 2>&1 | tee log.surfaceFeatureExtract )
+
+echo "--- snappyHexMesh ---"
+( cd snappyHexMesh && snappyHexMesh -overwrite 2>&1 | tee log.snappyHexMesh )
+
+echo "--- Extrusion 2D (extrudeMesh) ---"
+( cd snappyHexMesh && extrudeMesh 2>&1 | tee log.extrudeMesh )
+
+echo "--- Conversion symFront/symBack : symmetryPlane → empty ---"
+python3 - << 'PYEOF'
+import re
+fn = "snappyHexMesh/constant/polyMesh/boundary"
+with open(fn) as f:
+    txt = f.read()
+for patch in ("symFront", "symBack"):
+    txt = re.sub(
+        r"(" + patch + r"\s*\{[^}]*?)type\s+symmetryPlane;\s*\n(\s*inGroups\s+[^\n]+\n)?",
+        r"\1type            empty;\n",
+        txt, flags=re.DOTALL)
+with open(fn, "w") as f:
+    f.write(txt)
+print("OK: symFront, symBack → empty")
+PYEOF
+
+# ============================================================
+# ÉTAPE 2 : simpleFoam (RANS stationnaire)
+# ============================================================
+echo "--- Copie du maillage vers simpleFoam ---"
+cp -r snappyHexMesh/constant/polyMesh simpleFoam/constant/
+
+echo "--- simpleFoam ---"
+( cd simpleFoam && restore0Dir && simpleFoam 2>&1 | tee log.simpleFoam )
+
+# ============================================================
+# ÉTAPE 3 : pimpleFoam (instationnaire, initialisation depuis simpleFoam)
+# ============================================================
+echo "--- Copie du maillage vers pimpleFoam ---"
+cp -r snappyHexMesh/constant/polyMesh pimpleFoam/constant/
+
+echo "--- Initialisation pimpleFoam depuis simpleFoam (mapFields) ---"
+( cd pimpleFoam && restore0Dir )
+mapFields simpleFoam -case pimpleFoam -sourceTime latestTime -consistent
+
+echo "--- pimpleFoam (parallèle 4 cœurs) ---"
+( cd pimpleFoam && decomposePar -force 2>&1 | tee log.decomposePar )
+mpirun -np 4 pimpleFoam -parallel -case pimpleFoam 2>&1 | tee pimpleFoam/log.pimpleFoam
+( cd pimpleFoam && reconstructPar 2>&1 | tee log.reconstructPar )
+
+echo "=== Terminé. Lancer : paraFoam -case simpleFoam & ==="

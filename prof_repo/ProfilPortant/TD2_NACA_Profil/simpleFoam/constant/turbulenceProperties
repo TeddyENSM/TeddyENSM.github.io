@@ -1,0 +1,27 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2412                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      turbulenceProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Note: "turbulenceProperties" est le nom correct pour OpenFOAM ESI (v2012+).
+// Ne pas confondre avec "momentumTransport" utilisé par OpenFOAM.org.
+
+simulationType  RAS;
+
+RAS
+{
+    RASModel    kOmegaSST;
+    turbulence  on;
+    printCoeffs on;
+}
+
+// ************************************************************************* //
