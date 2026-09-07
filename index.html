@@ -1,685 +1,833 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio Architecture Navale | Teddy GUILLEMOT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teddy Guillemot | Portfolio naval</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f172a;
-            --surface: #111827;
-            --surface-alt: #1f2937;
-            --surface-soft: rgba(255,255,255,0.06);
-            --text: #e5e7eb;
-            --muted: #a5b4fc;
-            --accent: #38bdf8;
-            --accent-strong: #0ea5e9;
-            --border: rgba(148,163,184,0.2);
-            --radius: 24px;
-            --shadow: 0 24px 80px rgba(0,0,0,0.25);
+            --bg: #071821;
+            --bg-2: #0d1e2b;
+            --panel: rgba(10, 27, 36, 0.9);
+            --panel-strong: rgba(13, 33, 43, 0.96);
+            --panel-soft: rgba(17, 38, 49, 0.86);
+            --line: rgba(132, 197, 220, 0.24);
+            --line-strong: rgba(132, 197, 220, 0.42);
+            --text: #ebf6ff;
+            --muted: #afc9d8;
+            --blue: #7ec9ff;
+            --blue-strong: #47b5ff;
+            --cyan: #8fe7ff;
+            --shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+            --radius: 26px;
         }
 
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: 'Roboto', sans-serif;
-            background: radial-gradient(circle at top, rgba(56,189,248,0.15), transparent 35%),
-                        linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            font-family: 'Inter', sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(103, 195, 255, 0.15), transparent 22%),
+                linear-gradient(180deg, #071821 0%, #030d15 100%);
             color: var(--text);
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
         }
 
-        header.page-header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            backdrop-filter: blur(14px);
-            background: rgba(7, 13, 27, 0.84);
-            border-bottom: 1px solid rgba(148,163,184,0.12);
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; display: block; }
+
+        .container {
+            width: min(1220px, calc(100% - 28px));
+            margin: 0 auto;
         }
 
         .topbar {
-            max-width: 1240px;
-            margin: 0 auto;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            backdrop-filter: blur(14px);
+            background: rgba(6, 17, 24, 0.74);
+            border-bottom: 1px solid rgba(148,163,184,0.16);
+        }
+
+        .topbar-inner {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 18px 28px;
+            gap: 16px;
+            min-height: 82px;
         }
 
         .brand {
-            display: flex;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            color: var(--cyan);
+            display: inline-flex;
             align-items: center;
             gap: 12px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: var(--accent);
         }
 
-        .brand span {
-            color: #f8fafc;
+        .brand-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), #f0fbff);
+            box-shadow: 0 0 0 6px rgba(126, 201, 255, 0.12);
         }
 
-        .nav-links {
+        .nav {
             display: flex;
-            gap: 18px;
+            align-items: center;
+            gap: 26px;
+            flex-wrap: wrap;
         }
 
-        .nav-links a {
+        .nav a {
             position: relative;
-            color: var(--muted);
-            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            height: 82px;
+            color: rgba(235, 246, 255, 0.77);
+            font-size: 0.78rem;
+            letter-spacing: 0.04em;
             transition: color 0.2s ease;
         }
 
-        .nav-links a:hover,
-        .nav-links a.active {
+        .nav a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background: var(--cyan);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.2s ease;
+        }
+
+        .nav a:hover,
+        .nav a.active {
             color: var(--text);
         }
 
-        .nav-links a.active::after,
-        .nav-links a:hover::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: -6px;
-            width: 100%;
-            height: 2px;
-            background: var(--accent);
+        .nav a:hover::after,
+        .nav a.active::after {
+            transform: scaleX(1);
+        }
+
+        .lang-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 8px;
+            padding: 8px 10px;
+            border: 1px solid var(--line);
             border-radius: 999px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .lang-btn {
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            cursor: pointer;
+            font-weight: 700;
+            padding: 6px 10px;
+            border-radius: 999px;
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn.active {
+            background: rgba(126, 201, 255, 0.12);
+            color: var(--text);
+            border: 1px solid var(--line-strong);
         }
 
         .page {
+            padding: 26px 0 80px;
+        }
+
+        .shell {
             display: grid;
-            grid-template-columns: minmax(260px, 320px) 1fr;
-            gap: 32px;
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 40px 28px 60px;
+            grid-template-columns: 320px minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
         }
 
         .sidebar {
             position: sticky;
-            top: 100px;
-            align-self: start;
-            background: rgba(15,23,42,0.95);
-            border: 1px solid var(--border);
+            top: 110px;
+            padding: 22px 18px 18px;
             border-radius: var(--radius);
-            padding: 26px;
+            background: linear-gradient(180deg, rgba(13, 30, 39, 0.97), rgba(11, 22, 30, 0.96));
+            border: 1px solid var(--line);
             box-shadow: var(--shadow);
         }
 
-        .sidebar h3 {
+        .side-title {
             margin: 0 0 16px;
-            font-size: 1rem;
-            color: var(--accent);
-            letter-spacing: 0.12em;
+            font-size: 0.78rem;
+            letter-spacing: 0.2em;
             text-transform: uppercase;
+            color: var(--muted);
         }
 
-        .sidebar p {
-            margin: 0 0 20px;
-            color: #cbd5e1;
-            line-height: 1.8;
+        .profile {
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(148,163,184,0.12);
         }
 
-        .sidebar .badge {
+        .profile h2 {
+            font-size: clamp(1.9rem, 2.4vw, 2.6rem);
+            margin: 0;
+            letter-spacing: -0.06em;
+            line-height: 1;
+        }
+
+        .profile p {
+            margin: 14px 0 0;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .cv-link {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 999px;
-            background: rgba(56,189,248,0.12);
-            color: var(--accent);
-            font-weight: 600;
-            margin-top: 12px;
-        }
-
-        .sidebar nav {
-            display: grid;
-            gap: 12px;
-        }
-
-        .sidebar nav a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 16px;
-            border-radius: 16px;
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid transparent;
-            transition: all 0.25s ease;
-        }
-
-        .sidebar nav a:hover,
-        .sidebar nav a.active {
-            background: rgba(56,189,248,0.14);
-            border-color: rgba(56,189,248,0.25);
+            justify-content: center;
+            width: 100%;
+            min-height: 52px;
+            border-radius: 14px;
+            border: 1px solid var(--line-strong);
+            background: linear-gradient(135deg, rgba(126, 201, 255, 0.16), rgba(126, 201, 255, 0.04));
             color: var(--text);
+            font-weight: 700;
+            margin: 10px 0 20px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
-        main.content {
+        .cv-link:hover {
+            transform: translateY(-2px);
+            border-color: rgba(126,201,255,0.7);
+        }
+
+        .side-nav {
+            display: grid;
+            gap: 10px;
+        }
+
+        .side-nav a {
+            display: flex;
+            align-items: center;
+            min-height: 52px;
+            padding: 0 14px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.02);
+            color: rgba(235,246,255,0.9);
+            transition: all 0.2s ease;
+        }
+
+        .side-nav a:hover,
+        .side-nav a.active {
+            background: rgba(126, 201, 255, 0.08);
+            border-color: rgba(126, 201, 255, 0.2);
+        }
+
+        .content {
             min-width: 0;
         }
 
-        .section-head {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 18px;
-            margin-bottom: 24px;
+        .hero {
+            background: linear-gradient(180deg, rgba(11, 30, 39, 0.9), rgba(10, 22, 30, 0.86));
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: clamp(22px, 3vw, 34px);
         }
 
-        .section-head h1 {
-            font-size: clamp(2rem, 2.5vw, 3.2rem);
+        .hero h1 {
             margin: 0;
-            line-height: 1.05;
-            max-width: 720px;
+            font-size: clamp(2.2rem, 4vw, 4.1rem);
+            letter-spacing: -0.07em;
+            line-height: 0.98;
         }
 
-        .section-head p {
-            color: #cbd5e1;
-            max-width: 680px;
-            line-height: 1.8;
+        .hero .subtitle {
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: clamp(1.05rem, 1.8vw, 1.55rem);
+            line-height: 1.6;
+            max-width: 900px;
         }
 
-        .hero-grid {
+        .hero-card-grid {
             display: grid;
-            gap: 22px;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            margin-top: 32px;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 28px;
         }
 
-        .hero-card {
-            border-radius: 28px;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(255,255,255,0.03);
-            padding: 28px;
-            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-            transition: transform 0.3s ease, background 0.3s ease;
+        .mini-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 18px 18px 16px;
+            min-height: 150px;
         }
 
-        .hero-card:hover {
-            transform: translateY(-4px);
-            background: rgba(56,189,248,0.08);
+        .mini-card h3 {
+            margin: 0 0 12px;
+            font-size: 1.2rem;
+            letter-spacing: -0.04em;
         }
 
-        .hero-card strong {
-            display: block;
-            font-size: 1.15rem;
-            margin-bottom: 14px;
+        .mini-card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .section {
+            margin-top: 28px;
+            background: linear-gradient(180deg, rgba(11, 30, 39, 0.9), rgba(10, 22, 30, 0.86));
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: clamp(18px, 2.5vw, 28px);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(148,163,184,0.12);
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: clamp(1.5rem, 2.4vw, 2.4rem);
+            letter-spacing: -0.05em;
+        }
+
+        .section-header .tag {
+            padding: 7px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line-strong);
+            background: rgba(126,201,255,0.08);
             color: var(--text);
-        }
-
-        .hero-card span {
-            display: block;
-            color: #cbd5e1;
-            line-height: 1.75;
-        }
-
-        .highlight {
-            color: var(--accent);
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
         }
 
         .project-grid {
             display: grid;
-            gap: 22px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
         }
 
         .project-card {
-            border-radius: 24px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            padding: 28px;
-            box-shadow: var(--shadow);
-            transition: transform 0.25s ease, border-color 0.25s ease;
+            display: grid;
+            grid-template-columns: 220px minmax(0, 1fr);
+            gap: 18px;
+            padding: 16px;
+            background: rgba(12, 26, 35, 0.8);
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
         .project-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(56,189,248,0.3);
+            transform: translateY(-3px);
+            border-color: rgba(126, 201, 255, 0.48);
         }
 
-        .project-card h3 {
-            margin-top: 0;
-            margin-bottom: 12px;
-            color: #f8fafc;
+        .thumb {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(12, 23, 31, 1);
+            min-height: 180px;
         }
 
-        .project-card p {
-            margin: 0 0 18px;
-            color: #cbd5e1;
+        .thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
         }
 
-        .project-actions {
+        .project-card:hover .thumb img {
+            transform: scale(1.02);
+        }
+
+        .project-info {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .project-info h3 {
+            margin: 0 0 10px;
+            font-size: clamp(1.35rem, 2vw, 2rem);
+            letter-spacing: -0.05em;
+        }
+
+        .project-info p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 0.98rem;
+        }
+
+        .actions {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
+            margin-top: 16px;
         }
 
-        .project-actions a {
+        .button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 12px 18px;
-            border-radius: 999px;
-            background: var(--accent);
-            color: #020617;
+            min-height: 42px;
+            padding: 0 18px;
+            border-radius: 12px;
+            font-size: 0.88rem;
             font-weight: 700;
-            transition: transform 0.2s ease, background 0.2s ease;
+            border: 1px solid var(--line-strong);
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
-        .project-actions a:hover {
+        .button.primary {
+            background: linear-gradient(135deg, rgba(126,201,255,0.25), rgba(126,201,255,0.1));
+            color: var(--text);
+        }
+
+        .button.secondary {
+            background: rgba(255,255,255,0.02);
+            color: var(--muted);
+        }
+
+        .button:hover {
             transform: translateY(-2px);
-            background: var(--accent-strong);
-        }
-
-        .pdf-link {
-            display: inline-block;
-            margin-bottom: 14px;
-            overflow: hidden;
-            border-radius: 16px;
-            max-height: 300px;
-        }
-
-        .pdf-thumb {
-            width: 180px;
-            height: 225px;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.06);
-            display: block;
-            object-fit: cover;
-        }
-
-        /* keep .large as alias but same size for uniformity */
-        .pdf-thumb.large {
-            width: 180px;
-            height: 225px;
-            border-radius: 16px;
-        }
-
-        .pdf-thumb.placeholder {
-            width: 120px;
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(56,189,248,0.12);
-            color: var(--accent);
-            font-weight: 800;
-            letter-spacing: 0.08em;
-            font-size: 0.95rem;
-        }
-
-        .section-block {
-            opacity: 0;
-            transform: translateY(24px);
-            animation: enter 0.8s ease forwards;
-        }
-
-        .section-block:nth-child(2) { animation-delay: 0.12s; }
-        .section-block:nth-child(3) { animation-delay: 0.18s; }
-        .section-block:nth-child(4) { animation-delay: 0.22s; }
-        .section-block:nth-child(5) { animation-delay: 0.26s; }
-        .section-block:nth-child(6) { animation-delay: 0.30s; }
-        .section-block:nth-child(7) { animation-delay: 0.34s; }
-
-        @keyframes enter {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            border-color: rgba(126,201,255,0.7);
         }
 
         .footer {
-            margin-top: 42px;
-            padding: 24px 0 12px;
-            color: #94a3b8;
-            border-top: 1px solid rgba(148,163,184,0.14);
-            text-align: center;
-            font-size: 0.95rem;
+            margin-top: 28px;
+            padding: 18px 0 0;
+            border-top: 1px solid rgba(148,163,184,0.15);
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
         }
 
-        @media (max-width: 1080px) {
-            .page {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: relative;
-                top: 0;
-            }
-
-            .hero-grid {
-                grid-template-columns: 1fr;
-            }
+        .footer a {
+            color: var(--text);
         }
 
-        @media (max-width: 720px) {
-            .topbar {
+        @media (max-width: 980px) {
+            .shell { grid-template-columns: 1fr; }
+            .sidebar { position: relative; top: 0; }
+            .project-grid { grid-template-columns: 1fr; }
+            .hero-card-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 680px) {
+            .topbar-inner {
                 flex-direction: column;
-                align-items: stretch;
-                gap: 14px;
-            }
-
-            .nav-links {
                 justify-content: center;
-                flex-wrap: wrap;
+                padding: 12px 0 14px;
             }
-
-            .sidebar {
-                padding: 22px;
+            .nav {
+                justify-content: center;
+            }
+            .nav a {
+                height: auto;
+                padding: 8px 0;
+            }
+            .project-card {
+                grid-template-columns: 1fr;
+            }
+            .thumb {
+                min-height: 200px;
             }
         }
     </style>
 </head>
 <body>
-    <header class="page-header">
-        <div class="topbar">
-            <a class="brand" href="#intro"><span>ENSM</span> Portfolio Naval</a>
-            <nav class="nav-links" aria-label="Navigation du site">
+    <header class="topbar">
+        <div class="container topbar-inner">
+            <div class="brand"><span class="brand-dot"></span> ENSM portfolio naval</div>
+            <nav class="nav" aria-label="Navigation principale">
                 <a href="#intro" class="active">Accueil</a>
                 <a href="#chap1">Stabilité</a>
                 <a href="#chap2">Vélique</a>
-                <a href="#chap3">Construction</a>
                 <a href="#chap4">OpenFOAM</a>
                 <a href="#chap5">CFD</a>
                 <a href="#chap6">Automatique</a>
+                <span class="lang-switch" aria-label="Langue">
+                    <button class="lang-btn active" type="button" data-lang="fr">FR</button>
+                    <button class="lang-btn" type="button" data-lang="en">EN</button>
+                </span>
             </nav>
         </div>
     </header>
 
-    <div class="page">
-        <aside class="sidebar">
-            <h3>Teddy GUILLEMOT</h3>
-            <p>Élève ingénieur en architecture navale à l'ENSM. Portfolio orienté vers les projets de stabilité, CFD, modélisation 3D et automatique embarquée.</p>
-            <div class="badge">Objectif : Erasmus / Recrutement naval</div>
-            <nav aria-label="Sections du portfolio">
-                <a href="#intro" class="active">Introduction</a>
-                <a href="#chap1">Stabilité</a>
-                <a href="#chap2">Aérodynamique</a>
-                <a href="#chap3">Construction</a>
-                <a href="#chap4">OpenFOAM</a>
-                <a href="#chap5">CFD</a>
-                <a href="#chap6">Automatique</a>
-            </nav>
-        </aside>
+    <main class="container page">
+        <div class="shell">
+            <aside class="sidebar">
+                <div class="side-title">Portfolio</div>
+                <div class="profile">
+                    <h2>Teddy<br>Guillemot</h2>
+                    <p>J’aime la mer pour ce qu’elle exige : rigueur, équilibre et performance. J’étudie l’architecture navale pour comprendre les navires comme des systèmes complexes où la stabilité, l’hydrodynamique, la structure et le contrôle se rejoignent.</p>
+                    <p>Étudiant en architecture navale à l’ENSM. J’ai choisi de travailler sur les sujets qui donnent du sens à la conception des navires : stabilité, hydrodynamique, modélisation 3D et simulation numérique.</p>
+                </div>
+                <a class="cv-link" href="documents/automatique/Teddy_Guillemotv1.pdf" target="_blank">Voir le CV</a>
 
-        <main class="content">
-            <section id="intro" class="section-block">
-                <div class="section-head">
-                    <div>
-                        <h1>Portfolio d'architecture navale</h1>
-                        <p>Valorisation de mes réalisations technique et simulation : carènes, stabilité, CFD, Rhinos 3D et contrôle commande.</p>
+                <nav class="side-nav" aria-label="Navigation secondaire">
+                    <a class="active" href="#intro">Introduction</a>
+                    <a href="#chap1">Stabilité</a>
+                    <a href="#chap2">Vélique</a>
+                    <a href="#chap4">OpenFOAM</a>
+                    <a href="#chap5">CFD</a>
+                    <a href="#chap6">Automatique</a>
+                </nav>
+            </aside>
+
+            <div class="content">
+                <section id="intro" class="hero">
+
+                    <div class="hero-card-grid">
+                        <article class="mini-card">
+                            <h3>Approche</h3>
+                            <p>Je m’intéresse aux navires comme aux systèmes qu’ils sont : équilibre, résistance, propulsion et maîtrise du comportement en mer.</p>
+                        </article>
+                        <article class="mini-card">
+                            <h3>Compétences</h3>
+                            <p>OpenFOAM, CFD, stabilité du navire, Rhino 3D, mécanique des fluides et automatisme.</p>
+                        </article>
                     </div>
-                </div>
+                </section>
 
-                <div class="hero-grid">
-                    <article class="hero-card">
-                        <strong>Identité</strong>
-                        <span>Passionné par l'architecture navale, je cherche à comprendre et relever les enjeux contemporains de conception et de performance des navires. Je souhaite montrer mes compétences en modélisation, CFD et contrôle embarqué pour valoriser ma candidature (Erasmus Croatie) et convaincre de futurs employeurs du secteur naval.</span>
-                    </article>
-                    <article class="hero-card">
-                        <strong>Compétences clés</strong>
-                        <span>OpenFOAM, CFD, mécanique des fluides navales, stabilité, géométrie Rhino 3D, automatique et asservissement.</span>
-                    </article>
-                    <article class="hero-card">
-                        <strong>Cible</strong>
-                        <span>Professeurs, universités d’échange et futurs employeurs dans le secteur naval et la simulation numérique.</span>
-                    </article>
-                    <article class="hero-card">
-                        <strong>CV anglais</strong>
-                        <span>Mon CV en anglais, pour présenter mon parcours et mes compétences à des universités et recruteurs.</span>
-                        <div style="margin-top: 18px; display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
-                            <a class="pdf-link" href="documents/automatique/Teddy_Guillemotv1.pdf" target="_blank" title="Aperçu du CV Teddy Guillemot" style="margin-bottom:0;">
-                                <img class="pdf-thumb large" src="thumbnails/Teddy_Guillemotv1.png" alt="CV Teddy Guillemot">
-                            </a>
-                            <div style="display:flex; flex-direction:column; gap:12px;">
-                                <a class="project-actions" href="documents/automatique/Teddy_Guillemotv1.pdf" target="_blank" style="display:inline-flex; padding:12px 18px; border-radius:999px; background:var(--accent); color:#020617; font-weight:700;">Voir le CV</a>
-                                <a class="project-actions" href="documents/automatique/Teddy_Guillemotv1.pdf" download style="display:inline-flex; padding:12px 18px; border-radius:999px; background:rgba(255,255,255,0.06); color:var(--text); border:1px solid rgba(255,255,255,0.08); font-weight:700;">Télécharger</a>
+                <section id="chap1" class="section">
+                    <div class="section-header">
+                        <h2>Stabilité</h2>
+                        <span class="tag">Navires</span>
+                    </div>
+
+                    <div class="project-grid">
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/tipe-stabilisation.png" alt="TIPE stabilisation" />
                             </div>
-                        </div>
-                    </article>
-                </div>
-            </section>
-
-            <section id="chap1" class="section-block">
-                <div class="section-head">
-                    <h2>Stabilité des Navires</h2>
-                </div>
-                <p>Étude approfondie de la stabilité statique et dynamique, avec un focus sur les systèmes anti-roulis et l’analyse des couples de redressement.</p>
-                <div class="project-grid">
-                    <article class="project-card">
-                        <h3>TIPE - Stabilité</h3>
-                        <p>Rapport technique de simulation et conclusions sur les limites des stabilisateurs avec liaison pivot.</p>
-                            <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                                <a class="pdf-link" href="documents/stabilite/tipe-stabilisation.pdf" target="_blank" title="Aperçu MCOT stabilisation">
-                                    <img class="pdf-thumb" src="thumbnails/tipe-stabilisation.png" alt="MCOT stabilisation">
-                                </a>
-                                <div style="flex:1;min-width:0;">
-                                    <div class="project-actions">
-                                        <a href="documents/stabilite/tipe-stabilisation.pdf" target="_blank">MCOT stabilisation</a>
-                                        <a href="documents/stabilite/presentation-tipe.pdf" target="_blank">Présentation TIPE</a>
-                                    </div>
+                            <div class="project-info">
+                                <h3>TIPE — Stabilité</h3>
+                                <p>Étude du comportement d’un système stabilisateur et des effets de couple de redressement sur un modèle réduit.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/stabilite/tipe-stabilisation.pdf" target="_blank">Ouvrir</a>
+                                    <a class="button secondary" href="documents/stabilite/presentation-tipe.pdf" target="_blank">Présentation</a>
                                 </div>
                             </div>
-                    </article>
-                </div>
-            </section>
+                        </article>
+                    </div>
+                </section>
 
-            <section id="chap2" class="section-block">
-                <div class="section-head">
-                    <h2>Propulsion vélique</h2>
-                </div>
-                <p>Analyse des forces de portance et de propulsion vélique, appliquée aux voiles, rotors Flettner et à l’efficacité globale des systèmes véliques.</p>
-                <div class="project-grid">
-                    <article class="project-card">
-                        <h3>Étude vélique</h3>
-                        <p>Document de synthèse sur les phénomènes aérodynamiques appliqués aux voiliers et aux technologies de propulsion alternative.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/voile/propulsionvelique.pdf" target="_blank" title="Aperçu Propulsion vélique">
-                                <img class="pdf-thumb" src="thumbnails/propulsionvelique.png" alt="Propulsion vélique">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/voile/propulsionvelique.pdf" target="_blank">Propulsion vélique</a>
+                <section id="chap2" class="section">
+                    <div class="section-header">
+                        <h2>Vélique</h2>
+                        <span class="tag">Propulsion</span>
+                    </div>
+
+                    <div class="project-grid">
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/propulsionvelique.png" alt="Propulsion vélique" />
+                            </div>
+                            <div class="project-info">
+                                <h3>Propulsion vélique</h3>
+                                <p>Travail de synthèse sur la portance, les performances du voilier et les mécanismes de propulsion alternatives.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/voile/propulsionvelique.pdf" target="_blank">Voir le document</a>
                                 </div>
                             </div>
-                        </div>
-                    </article>
-                </div>
-            </section>
+                        </article>
+                    </div>
+                </section>
 
-            <section id="chap3" class="section-block">
-                <div class="section-head">
-                    <h2>Construction navale</h2>
-                </div>
-                <p>Réalisation d’une étude sur les matériaux, la protection anticorrosion et les principes structuraux des navires modernes.</p>
-                <div class="project-grid">
-                    <article class="project-card">
-                        <h3>Matériaux & protection</h3>
-                        <p>Analyse des aciers navals, du cycle de construction et des stratégies de protection contre la corrosion.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/construction/construction-navale.pdf" target="_blank" title="Aperçu Construction navale">
-                                <img class="pdf-thumb" src="thumbnails/construction-navale.png" alt="Construction navale">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/construction/construction-navale.pdf" target="_blank">Desription et construction</a>
+                <section id="chap4" class="section">
+                    <div class="section-header">
+                        <h2>OpenFOAM</h2>
+                        <span class="tag">Hydrodynamique</span>
+                    </div>
+
+                    <div class="project-grid">
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/avancementrhinov1.png" alt="Conception Rhino 3D" />
+                            </div>
+                            <div class="project-info">
+                                <h3>Résistance à l’avancement</h3>
+                                <p>Conception de la carène, passage 2D→3D, maillage et premiers éléments de simulation pour l’étude de la résistance.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/openfoam/avancementrhinov1.pdf" target="_blank">Consulter</a>
                                 </div>
                             </div>
-                        </div>
-                    </article>
-                </div>
-            </section>
+                        </article>
+                    </div>
+                </section>
 
-            <section id="chap4" class="section-block">
-                <div class="section-head">
-                    <h2>Résistance à l'avancement</h2>
-                </div>
-                <p>Présentation de la chaîne de conception Rhino 3D jusqu’au maillage hydrodynamique et à la simulation OpenFOAM.</p>
-                <div class="project-grid">
-                    <article class="project-card">
-                        <h3>OpenFOAM & Rhino 3D</h3>
-                        <p>Document technique sur la modélisation de la carène, le passage 2D→3D et les choix de maillage nécessaires pour une simulation fiable.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/openfoam/avancementrhinov1.pdf" target="_blank" title="Aperçu Conception Rhino 3D">
-                                <img class="pdf-thumb" src="thumbnails/avancementrhinov1.png" alt="Conception Rhino 3D">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/openfoam/avancementrhinov1.pdf" target="_blank">Conception Rhino 3D</a>
+                <section id="chap5" class="section">
+                    <div class="section-header">
+                        <h2>CFD</h2>
+                        <span class="tag">Simulation</span>
+                    </div>
+
+                    <div class="project-grid">
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/TP_Poiseuille_Teddy_Guillemot.png" alt="TP Poiseuille" />
+                            </div>
+                            <div class="project-info">
+                                <h3>TP Poiseuille</h3>
+                                <p>Étude d’un écoulement laminaire avec OpenFOAM : maillage, conditions aux limites, convergence et analyse des résultats.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/cfd/TP_Poiseuille_Teddy_Guillemot.pdf" target="_blank">Ouvrir</a>
                                 </div>
                             </div>
-                        </div>
-                    </article>
-                </div>
-            </section>
+                        </article>
 
-            <section id="chap5" class="section-block">
-                <div class="section-head">
-                    <h2>CFD & simulation</h2>
-                </div>
-                <p>Consolidation des premiers acquis en mécanique des fluides numérique avec OpenFOAM et étude des comportements d’écoulement.</p>
-                <div class="project-grid">
-                    <article class="project-card">
-                        <h3>TP Poiseuille</h3>
-                        <p>Rapport complet de Teddy Guillemot sur l’écoulement laminaire Poiseuille avec OpenFOAM : maillage, conditions aux limites, convergence numérique et analyse des résultats.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/cfd/TP_Poiseuille_Teddy_Guillemot.pdf" target="_blank" title="Aperçu TP Poiseuille Teddy Guillemot">
-                                <img class="pdf-thumb" src="thumbnails/TP_Poiseuille_Teddy_Guillemot.png" alt="TP Poiseuille Teddy Guillemot">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/cfd/TP_Poiseuille_Teddy_Guillemot.pdf" target="_blank">CFD TP Poiseuille</a>
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/td2nacafinal-firstpage.png" alt="Première page du TD NACA 0012" />
+                            </div>
+                            <div class="project-info">
+                                <h3>TD NACA 0012</h3>
+                                <p>Première page du TD avec analyse aérodynamique du profil, portance et traînée sur le cas du NACA 0012.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/cfd/td2nacafinal.pdf" target="_blank">Voir le TD</a>
                                 </div>
                             </div>
-                        </div>
-                    </article>
+                        </article>
+                    </div>
+                </section>
 
-                    <article class="project-card">
-                        <h3>TD NACA 0012</h3>
-                        <p>Étude aérodynamique d’un profil NACA 0012 avec OpenFOAM : analyse de la portance, de la traînée et de la polaire des coefficients aérodynamiques.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/cfd/td2nacafinal.pdf" target="_blank" title="Aperçu TD NACA 0012">
-                                <img class="pdf-thumb" src="thumbnails/td2nacafinal.png" alt="TD NACA 0012">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/cfd/td2nacafinal.pdf" target="_blank">TD NACA 0012</a>
+                <section id="chap6" class="section">
+                    <div class="section-header">
+                        <h2>Automatique</h2>
+                        <span class="tag">Contrôle</span>
+                    </div>
+
+                    <div class="project-grid">
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/dm1automatique.png" alt="DM1 stabilisation roulis" />
+                            </div>
+                            <div class="project-info">
+                                <h3>DM1 — Stabilisation du roulis</h3>
+                                <p>Contrôle proportionnel et correcteur PD appliqué à une maquette navale en vue d’une réduction du roulis.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/automatique/dm1automatique.pdf" target="_blank">Compte rendu</a>
+                                    <a class="button secondary" href="documents/automatique/dm1enonce.pdf" target="_blank">Énoncé</a>
                                 </div>
                             </div>
-                        </div>
-                    </article>
+                        </article>
+
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/dm2automatique.png" alt="DM2 asservissement vitesse" />
+                            </div>
+                            <div class="project-info">
+                                <h3>DM2 — Asservissement de vitesse</h3>
+                                <p>Analyse d’un correcteur PI et d’une stratégie feedforward pour améliorer le suivi d’une consigne de vitesse.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/automatique/dm2automatique.pdf" target="_blank">Compte rendu</a>
+                                    <a class="button secondary" href="documents/automatique/dm2enonce.pdf" target="_blank">Énoncé</a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="project-card">
+                            <div class="thumb">
+                                <img src="thumbnails/dm3asservisementpositionteddy-2.png" alt="DM3 asservissement position" />
+                            </div>
+                            <div class="project-info">
+                                <h3>DM3 — Asservissement de position</h3>
+                                <p>Étude d’un système de positionnement sur maquette navale avec synthèse du régulateur et analyse de performances.</p>
+                                <div class="actions">
+                                    <a class="button primary" href="documents/automatique/dm3asservisementpositionteddy-2.pdf" target="_blank">Compte rendu</a>
+                                    <a class="button secondary" href="documents/automatique/AsservissementPosition2.pdf" target="_blank">Énoncé</a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <div class="footer">
+                    <span>Teddy Guillemot</span>
+                    <span><a href="mailto:teddy.guillemot@supmaritime.fr">teddy.guillemot@supmaritime.fr</a></span>
+                    <span><a href="tel:+33695936461">06 95 93 64 61</a></span>
                 </div>
-            </section>
-
-            <section id="chap6" class="section-block">
-                <div class="section-head">
-                    <h2>Automatique</h2>
-                </div>
-                <p>Travail sur la stabilisation dynamique et l’asservissement de vitesse, avec des stratégies de commande appliquées à des maquettes navales.</p>
-                <div class="project-grid">
-                    <article class="project-card">
-                        <h3>DM1 : stabilisation du roulis</h3>
-                        <p>Contrôle proportionnel et PD pour réduire le roulis sur une maquette équipée d’un gyrostabilisateur.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/automatique/dm1automatique.pdf" target="_blank" title="Aperçu DM1 stabilisation">
-                                <img class="pdf-thumb" src="thumbnails/dm1automatique.png" alt="DM1 stabilisation">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/automatique/dm1automatique.pdf" target="_blank">Compte rendu</a>
-                                    <a href="documents/automatique/dm1enonce.pdf" target="_blank">Enoncé</a>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="project-card">
-                        <h3>DM2 : asservissement de vitesse</h3>
-                        <p>Analyse d’un correcteur PI et d’une stratégie feedforward pour améliorer le suivi d’une consigne de vitesse.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/automatique/dm2automatique.pdf" target="_blank" title="Aperçu DM2 asservissement de vitesse">
-                                <img class="pdf-thumb" src="thumbnails/dm2automatique.png" alt="DM2 asservissement de vitesse">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/automatique/dm2automatique.pdf" target="_blank">Compte rendu</a>
-                                    <a href="documents/automatique/dm2enonce.pdf" target="_blank">Enoncé</a>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="project-card">
-                        <h3>DM3 : asservissement de position</h3>
-                        <p>Étude d’un asservissement de position sur maquette navale, avec la conception du régulateur et l’analyse de performances en boucle fermée.</p>
-                        <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;">
-                            <a class="pdf-link" href="documents/automatique/dm3asservisementpositionteddy-2.pdf" target="_blank" title="Aperçu DM3 asservissement de position">
-                                <img class="pdf-thumb" src="thumbnails/dm3asservisementpositionteddy-2.png" alt="DM3 asservissement de position">
-                            </a>
-                            <div style="flex:1;min-width:0;">
-                                <div class="project-actions">
-                                    <a href="documents/automatique/dm3asservisementpositionteddy-2.pdf" target="_blank">Compte rendu</a>
-                                    <a href="documents/automatique/AsservissementPosition2.pdf" target="_blank">Enoncé</a>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-
-                </div>
-            </section>
-
-            <div class="footer">
-                Portfolio préparé pour l’ENSM, Erasmus Croatie et des recruteurs du secteur naval.
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
 
     <script>
-        const navLinks = document.querySelectorAll('.nav-links a, .sidebar nav a');
-        const sections = document.querySelectorAll('main.content section');
+        const navLinks = document.querySelectorAll('.nav a, .side-nav a');
+        const sections = document.querySelectorAll('section[id]');
 
-        function setActiveLink() {
-            const offset = window.innerHeight / 2;
-            let currentId = 'intro';
+        function setActiveNav() {
+            const offset = window.innerHeight * 0.35;
+            let current = 'intro';
+
             sections.forEach(section => {
                 const rect = section.getBoundingClientRect();
-                if (rect.top <= offset && rect.bottom > offset) {
-                    currentId = section.id;
+                if (rect.top <= offset && rect.bottom >= offset) {
+                    current = section.id;
                 }
             });
+
             navLinks.forEach(link => {
-                link.classList.toggle('active', link.getAttribute('href') === '#' + currentId);
+                const href = link.getAttribute('href');
+                const isActive = href === '#' + current;
+                link.classList.toggle('active', isActive);
             });
         }
 
-        window.addEventListener('scroll', setActiveLink, { passive: true });
-        window.addEventListener('load', setActiveLink);
+        const langButtons = document.querySelectorAll('.lang-btn');
+        const storedLang = localStorage.getItem('portfolio_lang') || 'fr';
+        const languageText = {
+            fr: {
+                nav: ['Accueil', 'Stabilité', 'Vélique', 'OpenFOAM', 'CFD', 'Automatique'],
+                side: ['Introduction', 'Stabilité', 'Vélique', 'OpenFOAM', 'CFD', 'Automatique'],
+                sideTitle: 'Portfolio',
+                profile: 'J’aime la mer pour ce qu’elle exige : rigueur, équilibre et performance. J’étudie l’architecture navale pour comprendre les navires comme des systèmes complexes où la stabilité, l’hydrodynamique, la structure et le contrôle se rejoignent.',
+                cv: 'Voir le CV',
+                hero: 'Étudiant en architecture navale à l’ENSM. J’ai choisi de travailler sur les sujets qui donnent du sens à la conception des navires : stabilité, hydrodynamique, modélisation 3D et simulation numérique.',
+                miniTitles: ['Approche', 'Compétences'],
+                miniText: [
+                    'Je m’intéresse aux navires comme aux systèmes qu’ils sont : équilibre, résistance, propulsion et maîtrise du comportement en mer.',
+                    'OpenFOAM, CFD, stabilité du navire, Rhino 3D, mécanique des fluides et automatisme.'
+                ],
+                sections: ['Stabilité', 'Vélique', 'OpenFOAM', 'CFD', 'Automatique'],
+                tags: ['Navires', 'Propulsion', 'Hydrodynamique', 'Simulation', 'Contrôle'],
+                projects: [
+                    ['TIPE — Stabilité', 'Étude du comportement d’un système stabilisateur et des effets de couple de redressement sur un modèle réduit.'],
+                    ['Propulsion vélique', 'Travail de synthèse sur la portance, les performances du voilier et les mécanismes de propulsion alternatives.'],
+                    ['Résistance à l’avancement', 'Conception de la carène, passage 2D→3D, maillage et premiers éléments de simulation pour l’étude de la résistance.'],
+                    ['TP Poiseuille', 'Étude d’un écoulement laminaire avec OpenFOAM : maillage, conditions aux limites, convergence et analyse des résultats.'],
+                    ['TD NACA 0012', 'Première page du TD avec analyse aérodynamique du profil, portance et traînée sur le cas du NACA 0012.'],
+                    ['DM1 — Stabilisation du roulis', 'Contrôle proportionnel et correcteur PD appliqué à une maquette navale en vue d’une réduction du roulis.'],
+                    ['DM2 — Asservissement de vitesse', 'Analyse d’un correcteur PI et d’une stratégie feedforward pour améliorer le suivi d’une consigne de vitesse.'],
+                    ['DM3 — Asservissement de position', 'Étude d’un système de positionnement sur maquette navale avec synthèse du régulateur et analyse de performances.']
+                ],
+                buttons: ['Ouvrir', 'Présentation', 'Voir le document', 'Consulter', 'Ouvrir', 'Voir le TD', 'Compte rendu', 'Énoncé', 'Compte rendu', 'Énoncé']
+            },
+            en: {
+                nav: ['Home', 'Stability', 'Sailing', 'OpenFOAM', 'CFD', 'Control'],
+                side: ['Introduction', 'Stability', 'Sailing', 'OpenFOAM', 'CFD', 'Control'],
+                sideTitle: 'Portfolio',
+                profile: 'The sea appeals to me for what it demands: rigour, balance and performance. I study naval architecture to understand ships as complex systems where stability, hydrodynamics, structure and control meet.',
+                cv: 'View CV',
+                hero: 'Naval architecture student at ENSM. I focus on the subjects that shape ship design: stability, hydrodynamics, 3D modelling and numerical simulation.',
+                miniTitles: ['Approach', 'Skills'],
+                miniText: [
+                    'I see ships as systems: balance, resistance, propulsion and control of their behaviour at sea.',
+                    'OpenFOAM, CFD, ship stability, Rhino 3D, fluid mechanics and control systems.'
+                ],
+                sections: ['Stability', 'Sailing', 'OpenFOAM', 'CFD', 'Control'],
+                tags: ['Ships', 'Propulsion', 'Hydrodynamics', 'Simulation', 'Control'],
+                projects: [
+                    ['TIPE — Stability', 'Study of a stabilizer system and the righting moments acting on a reduced-scale model.'],
+                    ['Sailing propulsion', 'Synthesis of lift, sailing performance and alternative propulsion mechanisms.'],
+                    ['Resistance to advance', 'Hull design, 2D to 3D modelling, meshing and first simulation steps for resistance analysis.'],
+                    ['Poiseuille lab', 'OpenFOAM study of laminar flow: mesh, boundary conditions, convergence and results.'],
+                    ['TD NACA 0012', 'First page of the assignment with an aerodynamic study of the NACA 0012 profile, lift and drag.'],
+                    ['DM1 — Roll stabilisation', 'Proportional and PD control applied to a naval model to reduce roll motion.'],
+                    ['DM2 — Speed control', 'Study of a PI controller and feedforward strategy for tracking a speed setpoint.'],
+                    ['DM3 — Position control', 'Positioning study on a naval model with controller design and performance analysis.']
+                ],
+                buttons: ['Open', 'Presentation', 'View document', 'View', 'Open', 'View TD', 'Report', 'Statement', 'Report', 'Statement']
+            }
+        };
 
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.forEach(item => item.classList.remove('active'));
-                link.classList.add('active');
+        function applyLanguage(lang) {
+            const text = languageText[lang] || languageText.fr;
+            const navText = document.querySelectorAll('.nav > a');
+            const sideText = document.querySelectorAll('.side-nav a');
+            const sectionHeaders = document.querySelectorAll('.section-header h2');
+            const sectionTags = document.querySelectorAll('.section-header .tag');
+            const miniCards = document.querySelectorAll('.mini-card');
+            const actionLinks = document.querySelectorAll('.actions .button');
+            const projectCards = document.querySelectorAll('.project-card');
+
+            navText.forEach((link, index) => { link.textContent = text.nav[index]; });
+            sideText.forEach((link, index) => { link.textContent = text.side[index]; });
+            document.querySelector('.side-title').textContent = text.sideTitle;
+            document.querySelector('.profile p').textContent = text.profile;
+            document.querySelector('.cv-link').textContent = text.cv;
+            document.querySelector('.hero .subtitle').textContent = text.hero;
+            miniCards.forEach((card, index) => {
+                card.querySelector('h3').textContent = text.miniTitles[index];
+                card.querySelector('p').textContent = text.miniText[index];
             });
+            sectionHeaders.forEach((header, index) => { header.textContent = text.sections[index]; });
+            sectionTags.forEach((tag, index) => { tag.textContent = text.tags[index]; });
+
+            projectCards.forEach((card, index) => {
+                if (!text.projects[index]) return;
+                card.querySelector('h3').textContent = text.projects[index][0];
+                card.querySelector('p').textContent = text.projects[index][1];
+            });
+
+            actionLinks.forEach((link, index) => {
+                link.textContent = text.buttons[index] || link.textContent;
+            });
+
+            langButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
+            document.documentElement.lang = lang;
+            localStorage.setItem('portfolio_lang', lang);
+        }
+
+        langButtons.forEach(btn => {
+            btn.addEventListener('click', () => applyLanguage(btn.dataset.lang));
         });
+
+        applyLanguage(storedLang);
+        window.addEventListener('scroll', setActiveNav, { passive: true });
+        window.addEventListener('load', setActiveNav);
     </script>
 </body>
 </html>
