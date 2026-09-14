@@ -9,19 +9,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #071821;
-            --bg-2: #0d1e2b;
-            --panel: rgba(10, 27, 36, 0.9);
-            --panel-strong: rgba(13, 33, 43, 0.96);
-            --panel-soft: rgba(17, 38, 49, 0.86);
-            --line: rgba(132, 197, 220, 0.24);
-            --line-strong: rgba(132, 197, 220, 0.42);
-            --text: #ebf6ff;
-            --muted: #afc9d8;
-            --blue: #7ec9ff;
-            --blue-strong: #47b5ff;
-            --cyan: #8fe7ff;
-            --shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+            --bg: #ffffff;
+            --bg-2: #f6f9fa;
+            --panel: #ffffff;
+            --panel-strong: #ffffff;
+            --panel-soft: #fbfdfe;
+            --line: rgba(11, 30, 39, 0.09);
+            --line-strong: rgba(11, 30, 39, 0.18);
+            --text: #0b1e27;
+            --muted: #5b7280;
+            --blue: #1c6f94;
+            --blue-strong: #0f5f80;
+            --cyan: #0f8fae;
+            --shadow: 0 24px 60px rgba(15, 30, 40, 0.08);
             --radius: 26px;
         }
 
@@ -31,22 +31,9 @@
             margin: 0;
             min-height: 100vh;
             font-family: 'Inter', sans-serif;
-            background:
-                radial-gradient(circle at top left, rgba(103, 195, 255, 0.15), transparent 22%),
-                linear-gradient(180deg, #071821 0%, #030d15 100%);
+            background: linear-gradient(180deg, #ffffff 0%, #f6f9fa 100%);
             color: var(--text);
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 30px 30px;
-            mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+            font-weight: 400;
         }
 
         a { color: inherit; text-decoration: none; }
@@ -62,8 +49,8 @@
             top: 0;
             z-index: 40;
             backdrop-filter: blur(14px);
-            background: rgba(6, 17, 24, 0.74);
-            border-bottom: 1px solid rgba(148,163,184,0.16);
+            background: rgba(255, 255, 255, 0.82);
+            border-bottom: 1px solid var(--line);
         }
 
         .topbar-inner {
@@ -75,22 +62,22 @@
         }
 
         .brand {
-            font-weight: 800;
-            letter-spacing: 0.12em;
+            font-weight: 600;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            font-size: 0.75rem;
-            color: var(--cyan);
+            font-size: 0.72rem;
+            color: var(--text);
             display: inline-flex;
             align-items: center;
             gap: 12px;
         }
 
         .brand-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--cyan), #f0fbff);
-            box-shadow: 0 0 0 6px rgba(126, 201, 255, 0.12);
+            background: linear-gradient(135deg, var(--cyan), var(--blue-strong));
+            box-shadow: 0 0 0 5px rgba(15, 143, 174, 0.1);
         }
 
         .nav {
@@ -105,9 +92,10 @@
             display: inline-flex;
             align-items: center;
             height: 82px;
-            color: rgba(235, 246, 255, 0.77);
+            color: rgba(11, 30, 39, 0.56);
             font-size: 0.78rem;
-            letter-spacing: 0.04em;
+            font-weight: 500;
+            letter-spacing: 0.02em;
             transition: color 0.2s ease;
         }
 
@@ -142,7 +130,7 @@
             padding: 8px 10px;
             border: 1px solid var(--line);
             border-radius: 999px;
-            background: rgba(255,255,255,0.02);
+            background: rgba(11, 30, 39, 0.03);
         }
 
         .lang-btn {
@@ -150,14 +138,14 @@
             background: transparent;
             color: var(--muted);
             cursor: pointer;
-            font-weight: 700;
+            font-weight: 600;
             padding: 6px 10px;
             border-radius: 999px;
             transition: all 0.2s ease;
         }
 
         .lang-btn.active {
-            background: rgba(126, 201, 255, 0.12);
+            background: rgba(15, 143, 174, 0.1);
             color: var(--text);
             border: 1px solid var(--line-strong);
         }
@@ -178,7 +166,7 @@
             top: 110px;
             padding: 22px 18px 18px;
             border-radius: var(--radius);
-            background: linear-gradient(180deg, rgba(13, 30, 39, 0.97), rgba(11, 22, 30, 0.96));
+            background: #ffffff;
             border: 1px solid var(--line);
             box-shadow: var(--shadow);
         }
@@ -194,14 +182,15 @@
         .profile {
             margin-bottom: 18px;
             padding-bottom: 18px;
-            border-bottom: 1px solid rgba(148,163,184,0.12);
+            border-bottom: 1px solid var(--line);
         }
 
         .profile h2 {
-            font-size: clamp(1.9rem, 2.4vw, 2.6rem);
+            font-size: clamp(1.6rem, 2vw, 2.1rem);
+            font-weight: 600;
             margin: 0;
-            letter-spacing: -0.06em;
-            line-height: 1;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
         }
 
         .profile p {
@@ -219,16 +208,16 @@
             min-height: 52px;
             border-radius: 14px;
             border: 1px solid var(--line-strong);
-            background: linear-gradient(135deg, rgba(126, 201, 255, 0.16), rgba(126, 201, 255, 0.04));
+            background: linear-gradient(135deg, rgba(15, 143, 174, 0.1), rgba(15, 143, 174, 0.02));
             color: var(--text);
-            font-weight: 700;
+            font-weight: 600;
             margin: 10px 0 20px;
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
         .cv-link:hover {
             transform: translateY(-2px);
-            border-color: rgba(126,201,255,0.7);
+            border-color: rgba(15, 143, 174, 0.5);
         }
 
         .side-nav {
@@ -242,16 +231,18 @@
             min-height: 52px;
             padding: 0 14px;
             border-radius: 12px;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid rgba(255,255,255,0.02);
-            color: rgba(235,246,255,0.9);
+            background: rgba(11, 30, 39, 0.03);
+            border: 1px solid transparent;
+            color: rgba(11, 30, 39, 0.72);
+            font-weight: 500;
             transition: all 0.2s ease;
         }
 
         .side-nav a:hover,
         .side-nav a.active {
-            background: rgba(126, 201, 255, 0.08);
-            border-color: rgba(126, 201, 255, 0.2);
+            background: rgba(15, 143, 174, 0.08);
+            border-color: rgba(15, 143, 174, 0.22);
+            color: var(--text);
         }
 
         .content {
@@ -259,59 +250,72 @@
         }
 
         .hero {
-            background: linear-gradient(180deg, rgba(11, 30, 39, 0.9), rgba(10, 22, 30, 0.86));
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(115deg, rgba(6,20,28,0.97) 0%, rgba(6,20,28,0.9) 45%, rgba(6,20,28,0.74) 100%),
+                url('img/hero-coque.png') no-repeat center right / cover;
             border: 1px solid var(--line);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            padding: clamp(22px, 3vw, 34px);
+            padding: clamp(18px, 2.4vw, 26px);
+            min-height: 190px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .hero h1 {
             margin: 0;
-            font-size: clamp(2.2rem, 4vw, 4.1rem);
-            letter-spacing: -0.07em;
-            line-height: 0.98;
+            font-weight: 600;
+            font-size: clamp(1.5rem, 2vw, 1.9rem);
+            letter-spacing: -0.01em;
+            line-height: 1.15;
         }
 
         .hero .subtitle {
-            margin: 18px 0 0;
-            color: var(--muted);
-            font-size: clamp(1.05rem, 1.8vw, 1.55rem);
-            line-height: 1.6;
+            margin: 8px 0 0;
+            color: rgba(235, 246, 255, 0.78);
+            font-weight: 400;
+            font-size: 0.92rem;
+            line-height: 1.5;
             max-width: 900px;
         }
 
         .hero-card-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-top: 28px;
+            gap: 12px;
+            margin-top: 16px;
         }
 
         .mini-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            padding: 18px 18px 16px;
-            min-height: 150px;
+            background: rgba(7, 20, 27, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(235, 246, 255, 0.14);
+            border-radius: 14px;
+            padding: 12px 14px 13px;
+            min-height: auto;
         }
 
         .mini-card h3 {
-            margin: 0 0 12px;
-            font-size: 1.2rem;
-            letter-spacing: -0.04em;
+            margin: 0 0 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: -0.01em;
+            color: #ebf6ff;
         }
 
         .mini-card p {
             margin: 0;
-            color: var(--muted);
-            line-height: 1.7;
-            font-size: 1rem;
+            color: rgba(235, 246, 255, 0.75);
+            line-height: 1.5;
+            font-size: 0.82rem;
         }
 
         .section {
             margin-top: 28px;
-            background: linear-gradient(180deg, rgba(11, 30, 39, 0.9), rgba(10, 22, 30, 0.86));
+            background: #ffffff;
             border: 1px solid var(--line);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
@@ -325,23 +329,37 @@
             gap: 12px;
             margin-bottom: 18px;
             padding-bottom: 12px;
-            border-bottom: 1px solid rgba(148,163,184,0.12);
+            border-bottom: 1px solid var(--line);
         }
 
         .section-header h2 {
             margin: 0;
-            font-size: clamp(1.5rem, 2.4vw, 2.4rem);
-            letter-spacing: -0.05em;
+            font-weight: 600;
+            font-size: clamp(1.4rem, 2vw, 2rem);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header h2::before {
+            content: "";
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--cyan), var(--blue-strong));
+            flex-shrink: 0;
         }
 
         .section-header .tag {
             padding: 7px 10px;
             border-radius: 999px;
-            border: 1px solid var(--line-strong);
-            background: rgba(126,201,255,0.08);
-            color: var(--text);
-            font-size: 0.72rem;
-            letter-spacing: 0.14em;
+            border: 1px solid rgba(15, 143, 174, 0.3);
+            background: rgba(15, 143, 174, 0.07);
+            color: var(--blue-strong);
+            font-weight: 600;
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
         }
 
@@ -352,28 +370,30 @@
         }
 
         .project-card {
-            display: grid;
-            grid-template-columns: 220px minmax(0, 1fr);
-            gap: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
             padding: 16px;
-            background: rgba(12, 26, 35, 0.8);
+            background: #ffffff;
             border: 1px solid var(--line);
             border-radius: 18px;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .project-card:hover {
             transform: translateY(-3px);
-            border-color: rgba(126, 201, 255, 0.48);
+            border-color: rgba(15, 143, 174, 0.35);
+            box-shadow: 0 16px 40px rgba(15, 30, 40, 0.1);
         }
 
         .thumb {
             position: relative;
             overflow: hidden;
             border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.08);
-            background: rgba(12, 23, 31, 1);
-            min-height: 180px;
+            border: 1px solid var(--line);
+            background: var(--bg-2);
+            width: 100%;
+            aspect-ratio: 16 / 10;
         }
 
         .thumb img {
@@ -389,22 +409,21 @@
 
         .project-info {
             min-width: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            width: 100%;
         }
 
         .project-info h3 {
             margin: 0 0 10px;
-            font-size: clamp(1.35rem, 2vw, 2rem);
-            letter-spacing: -0.05em;
+            font-weight: 600;
+            font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+            letter-spacing: -0.01em;
         }
 
         .project-info p {
             margin: 0;
             color: var(--muted);
             line-height: 1.7;
-            font-size: 0.98rem;
+            font-size: 0.96rem;
         }
 
         .actions {
@@ -421,31 +440,31 @@
             min-height: 42px;
             padding: 0 18px;
             border-radius: 12px;
-            font-size: 0.88rem;
-            font-weight: 700;
+            font-size: 0.86rem;
+            font-weight: 600;
             border: 1px solid var(--line-strong);
             transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
         .button.primary {
-            background: linear-gradient(135deg, rgba(126,201,255,0.25), rgba(126,201,255,0.1));
+            background: linear-gradient(135deg, rgba(15, 143, 174, 0.14), rgba(15, 143, 174, 0.05));
             color: var(--text);
         }
 
         .button.secondary {
-            background: rgba(255,255,255,0.02);
+            background: rgba(11, 30, 39, 0.03);
             color: var(--muted);
         }
 
         .button:hover {
             transform: translateY(-2px);
-            border-color: rgba(126,201,255,0.7);
+            border-color: rgba(15, 143, 174, 0.45);
         }
 
         .footer {
             margin-top: 28px;
             padding: 18px 0 0;
-            border-top: 1px solid rgba(148,163,184,0.15);
+            border-top: 1px solid var(--line);
             color: var(--muted);
             display: flex;
             align-items: center;
@@ -512,9 +531,7 @@
                 <div class="side-title">Portfolio</div>
                 <div class="profile">
                     <h2>Teddy<br>Guillemot</h2>
-                    <p>J’aime la mer pour ce qu’elle exige : rigueur, équilibre et performance. J’étudie l’architecture navale pour comprendre les navires comme des systèmes complexes où la stabilité, l’hydrodynamique, la structure et le contrôle se rejoignent.</p>
-                    <p>Étudiant en architecture navale à l’ENSM. J’ai choisi de travailler sur les sujets qui donnent du sens à la conception des navires : stabilité, hydrodynamique, modélisation 3D et simulation numérique.</p>
-                </div>
+                    <p>Ce qui m’intéresse dans l’architecture navale, c’est l’ingénierie : comprendre comment un navire tient ensemble, entre stabilité, hydrodynamique, structure et contrôle.</p>
                 <a class="cv-link" href="documents/automatique/Teddy_Guillemotv1.pdf" target="_blank">Voir le CV</a>
 
                 <nav class="side-nav" aria-label="Navigation secondaire">
@@ -529,11 +546,13 @@
 
             <div class="content">
                 <section id="intro" class="hero">
+                    <h1>Teddy Guillemot</h1>
+                    <p class="subtitle">Étudiant en architecture navale à l’ENSM.</p>
 
                     <div class="hero-card-grid">
                         <article class="mini-card">
                             <h3>Approche</h3>
-                            <p>Je m’intéresse aux navires comme aux systèmes qu’ils sont : équilibre, résistance, propulsion et maîtrise du comportement en mer.</p>
+                                <p>Je vois le navire comme un système : équilibre, résistance, propulsion et pilotage du comportement en mer — un regard qui s’applique aussi bien à la plaisance qu’aux enjeux de défense navale.</p>
                         </article>
                         <article class="mini-card">
                             <h3>Compétences</h3>
@@ -555,7 +574,7 @@
                             </div>
                             <div class="project-info">
                                 <h3>TIPE — Stabilité</h3>
-                                <p>Étude du comportement d’un système stabilisateur et des effets de couple de redressement sur un modèle réduit.</p>
+                                <p>Comment un système stabilisateur réagit aux effets de couple de redressement : je l’ai testé sur un modèle réduit, entre calcul et mise à l’épreuve.</p>
                                 <div class="actions">
                                     <a class="button primary" href="documents/stabilite/tipe-stabilisation.pdf" target="_blank">Ouvrir</a>
                                     <a class="button secondary" href="documents/stabilite/presentation-tipe.pdf" target="_blank">Présentation</a>
@@ -578,7 +597,7 @@
                             </div>
                             <div class="project-info">
                                 <h3>Propulsion vélique</h3>
-                                <p>Travail de synthèse sur la portance, les performances du voilier et les mécanismes de propulsion alternatives.</p>
+                                <p>Un sujet qui rejoint directement mon intérêt pour la course au large : j’ai travaillé sur la portance, les performances du voilier et des mécanismes de propulsion alternatifs.</p>
                                 <div class="actions">
                                     <a class="button primary" href="documents/voile/propulsionvelique.pdf" target="_blank">Voir le document</a>
                                 </div>
@@ -733,19 +752,19 @@
                 nav: ['Accueil', 'Stabilité', 'Vélique', 'OpenFOAM', 'CFD', 'Automatique'],
                 side: ['Introduction', 'Stabilité', 'Vélique', 'OpenFOAM', 'CFD', 'Automatique'],
                 sideTitle: 'Portfolio',
-                profile: 'J’aime la mer pour ce qu’elle exige : rigueur, équilibre et performance. J’étudie l’architecture navale pour comprendre les navires comme des systèmes complexes où la stabilité, l’hydrodynamique, la structure et le contrôle se rejoignent.',
+                profile: 'Ce qui m’intéresse dans l’architecture navale, c’est l’ingénierie : comprendre comment un navire tient ensemble, entre stabilité, hydrodynamique, structure et contrôle.',
                 cv: 'Voir le CV',
-                hero: 'Étudiant en architecture navale à l’ENSM. J’ai choisi de travailler sur les sujets qui donnent du sens à la conception des navires : stabilité, hydrodynamique, modélisation 3D et simulation numérique.',
+                hero: 'Étudiant en architecture navale à l’ENSM.',
                 miniTitles: ['Approche', 'Compétences'],
                 miniText: [
-                    'Je m’intéresse aux navires comme aux systèmes qu’ils sont : équilibre, résistance, propulsion et maîtrise du comportement en mer.',
+                    'Je vois le navire comme un système : équilibre, résistance, propulsion et pilotage du comportement en mer — un regard qui s’applique aussi bien à la plaisance qu’aux enjeux de défense navale.',
                     'OpenFOAM, CFD, stabilité du navire, Rhino 3D, mécanique des fluides et automatisme.'
                 ],
                 sections: ['Stabilité', 'Vélique', 'OpenFOAM', 'CFD', 'Automatique'],
                 tags: ['Navires', 'Propulsion', 'Hydrodynamique', 'Simulation', 'Contrôle'],
                 projects: [
-                    ['TIPE — Stabilité', 'Étude du comportement d’un système stabilisateur et des effets de couple de redressement sur un modèle réduit.'],
-                    ['Propulsion vélique', 'Travail de synthèse sur la portance, les performances du voilier et les mécanismes de propulsion alternatives.'],
+                    ['TIPE — Stabilité', 'Comment un système stabilisateur réagit aux effets de couple de redressement : je l’ai testé sur un modèle réduit, entre calcul et mise à l’épreuve.'],
+                    ['Propulsion vélique', 'Un sujet qui rejoint directement mon intérêt pour la course au large : j’ai travaillé sur la portance, les performances du voilier et des mécanismes de propulsion alternatifs.'],
                     ['Résistance à l’avancement', 'Conception de la carène, passage 2D→3D, maillage et premiers éléments de simulation pour l’étude de la résistance.'],
                     ['TP Poiseuille', 'Étude d’un écoulement laminaire avec OpenFOAM : maillage, conditions aux limites, convergence et analyse des résultats.'],
                     ['TD NACA 0012', 'Première page du TD avec analyse aérodynamique du profil, portance et traînée sur le cas du NACA 0012.'],
@@ -753,25 +772,25 @@
                     ['DM2 — Asservissement de vitesse', 'Analyse d’un correcteur PI et d’une stratégie feedforward pour améliorer le suivi d’une consigne de vitesse.'],
                     ['DM3 — Asservissement de position', 'Étude d’un système de positionnement sur maquette navale avec synthèse du régulateur et analyse de performances.']
                 ],
-                buttons: ['Ouvrir', 'Présentation', 'Voir le document', 'Consulter', 'Ouvrir', 'Voir le TD', 'Compte rendu', 'Énoncé', 'Compte rendu', 'Énoncé']
+                buttons: ['Ouvrir', 'Présentation', 'Voir le document', 'Consulter', 'Ouvrir', 'Voir le TD', 'Compte rendu', 'Énoncé', 'Compte rendu', 'Énoncé', 'Compte rendu', 'Énoncé']
             },
             en: {
                 nav: ['Home', 'Stability', 'Sailing', 'OpenFOAM', 'CFD', 'Control'],
                 side: ['Introduction', 'Stability', 'Sailing', 'OpenFOAM', 'CFD', 'Control'],
                 sideTitle: 'Portfolio',
-                profile: 'The sea appeals to me for what it demands: rigour, balance and performance. I study naval architecture to understand ships as complex systems where stability, hydrodynamics, structure and control meet.',
+                profile: 'What interests me in naval architecture is the engineering: understanding how a ship holds together, between stability, hydrodynamics, structure and control.',
                 cv: 'View CV',
-                hero: 'Naval architecture student at ENSM. I focus on the subjects that shape ship design: stability, hydrodynamics, 3D modelling and numerical simulation.',
+                hero: 'Naval architecture student at ENSM.',
                 miniTitles: ['Approach', 'Skills'],
                 miniText: [
-                    'I see ships as systems: balance, resistance, propulsion and control of their behaviour at sea.',
+                    'I see the ship as a system: balance, resistance, propulsion and control of behaviour at sea — a view that applies as much to leisure boats as to naval defence.',
                     'OpenFOAM, CFD, ship stability, Rhino 3D, fluid mechanics and control systems.'
                 ],
                 sections: ['Stability', 'Sailing', 'OpenFOAM', 'CFD', 'Control'],
                 tags: ['Ships', 'Propulsion', 'Hydrodynamics', 'Simulation', 'Control'],
                 projects: [
-                    ['TIPE — Stability', 'Study of a stabilizer system and the righting moments acting on a reduced-scale model.'],
-                    ['Sailing propulsion', 'Synthesis of lift, sailing performance and alternative propulsion mechanisms.'],
+                    ['TIPE — Stability', 'How a stabiliser system responds to righting-moment effects: I put it to the test on a reduced-scale model, between calculation and hands-on trial.'],
+                    ['Sailing propulsion', 'A subject that connects directly to my interest in offshore racing: I worked on lift, sailing performance and alternative propulsion mechanisms.'],
                     ['Resistance to advance', 'Hull design, 2D to 3D modelling, meshing and first simulation steps for resistance analysis.'],
                     ['Poiseuille lab', 'OpenFOAM study of laminar flow: mesh, boundary conditions, convergence and results.'],
                     ['TD NACA 0012', 'First page of the assignment with an aerodynamic study of the NACA 0012 profile, lift and drag.'],
@@ -779,7 +798,7 @@
                     ['DM2 — Speed control', 'Study of a PI controller and feedforward strategy for tracking a speed setpoint.'],
                     ['DM3 — Position control', 'Positioning study on a naval model with controller design and performance analysis.']
                 ],
-                buttons: ['Open', 'Presentation', 'View document', 'View', 'Open', 'View TD', 'Report', 'Statement', 'Report', 'Statement']
+                buttons: ['Open', 'Presentation', 'View document', 'View', 'Open', 'View TD', 'Report', 'Statement', 'Report', 'Statement', 'Report', 'Statement']
             }
         };
 
