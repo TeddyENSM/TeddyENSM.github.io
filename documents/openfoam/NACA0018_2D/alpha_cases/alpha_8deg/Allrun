@@ -1,0 +1,10 @@
+#!/bin/sh
+set -eu
+
+case_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$case_dir"
+
+python3 geometry/generate_mesh.py
+gmshToFoam geometry/naca0018_2d.msh
+changeDictionary -dict system/changeDictionaryDict
+checkMesh -allTopology -allGeometry
