@@ -28,6 +28,14 @@ if [[ ! "$jobs" =~ ^[1-9][0-9]*$ ]]; then
     exit 1
 fi
 
+end_time=${END_TIME:-1500}
+if [[ ! "$end_time" =~ ^[1-9][0-9]*$ ]]; then
+    echo "ERROR: END_TIME must be a positive integer." >&2
+    exit 1
+fi
+
+read -r -a angles <<< "${ANGLES:--10 -8 -6 -4 -2 0 2 4 6 8 10}"
+
 failures=()
 batch_pids=()
 batch_dirs=()
@@ -52,7 +60,7 @@ run_case() {
     fi
 }
 
-for angle in -10 -8 -6 -4 -2 0 2 4 6 8 10; do
+for angle in "${angles[@]}"; do
     angle_label=${angle}deg
     angle_dir="alpha_cases_v2406/alpha_${angle_label}"
     [[ -d "$angle_dir" ]] || continue
@@ -64,7 +72,7 @@ for angle in -10 -8 -6 -4 -2 0 2 4 6 8 10; do
         continue
     fi
 
-    if awk -v latest="$latest_time" 'BEGIN { exit !(latest >= 1500) }'; then
+    if awk -v latest="$latest_time" -v target="$end_time" 'BEGIN { exit !(latest >= target) }'; then
         echo "Skipping ${angle_dir}: already reached time ${latest_time}."
         continue
     fi
@@ -78,6 +86,7 @@ for angle in -10 -8 -6 -4 -2 0 2 4 6 8 10; do
         mv "${coefficient_file}.tmp" "$coefficient_file"
     fi
 
+    foamDictionary "$angle_dir/system/controlDict" -entry endTime -set "$end_time" >/dev/null
     foamDictionary "$angle_dir/system/controlDict" -entry startFrom -set latestTime >/dev/null
     log_file="$angle_dir/log.resume.from_${latest_time}_$(date +%Y%m%d_%H%M%S).log"
     echo "Resuming ${angle_dir} from time ${latest_time} (log: ${log_file##*/})"

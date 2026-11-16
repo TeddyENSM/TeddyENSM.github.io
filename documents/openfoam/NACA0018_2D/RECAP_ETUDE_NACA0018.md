@@ -85,17 +85,41 @@ Le maillage est charge dans ParaView avec le marqueur `NACA0018_2D.foam` (lecteu
 
 Le function object `forceCoeffs1` est configure dans `system/forceCoeffs` et inclus depuis `system/controlDict`. Il calcule les coefficients sur le patch `profile`, avec `rhoInf = 1000 kg/m3`, `magUInf = 2.06 m/s`, `lRef = 0.05 m` et `Aref = 5e-5 m2`, soit la corde de 0.05 m multipliee par l'extrusion de 0.001 m. Le script tourne `dragDir` et `liftDir` selon l'incidence; le centre de moment est `CofR = (0.025 0 0)`.
 
-Les dictionnaires ont ete lus par `foamDictionary`, et le demarrage de `simpleFoam` a ete valide sous OpenFOAM v2406. Le balayage complet de -10 a +10 deg (pas de 2 deg) a ensuite atteint 1500 iterations par incidence sans erreur fatale. Le CSV `polaire_coefficients_v2406.csv` et la figure `polaire_coefficients_v2406.svg` sont generes dans le dossier du cas. Les coefficients sont calcules avec la surface de reference coherente `Aref = 5e-5 m2`.
+Les dictionnaires ont ete lus par `foamDictionary`, et le demarrage de `simpleFoam` a ete valide sous OpenFOAM v2406. Le balayage de -10 a +10 deg (pas de 2 deg) a atteint 1500 iterations; les angles -8, -6, +4 et +10 ont ensuite ete prolonges a 3000 depuis les champs sauvegardes. Le CSV `polaire_coefficients_v2406.csv` et la figure `polaire_coefficients_v2406.svg` sont regeneres avec les valeurs prolongees. La surface de reference est `Aref = 5e-5 m2`.
 
-Les valeurs du tableau sont des moyennes des 10 dernieres mesures (100 iterations). Les forces sont stables selon le controle indicatif pour -10, -4, -2, 0, +2, +6 et +8 deg; elles derivent pour -8, +4 et +10 deg. Le point -6 deg est manifestement suspect (`Cd` moyen environ 0.0012, avec changement de signe pendant le calcul). Tous les cas ont atteint le temps final, mais les residus `SIMPLE` ne respectent pas tous le seuil `1e-5`; ces calculs ne constituent donc pas une polaire validee.
+Les valeurs du tableau sont des moyennes des 10 dernieres mesures (100 iterations). Les forces des onze angles passent maintenant le controle indicatif de stabilite. La prolongation a corrige le point -6 deg: `Cd` est positif et `Cl` est proche de l'oppose du cas +6 deg. Les residus `SIMPLE` ne respectent toutefois pas tous le seuil `1e-5` a 3000 iterations; la polaire n'est donc pas encore validee.
 
-Le balayage peut etre repris avec `JOBS=3 bash AllresumePolar`; il reprend les derniers champs enregistres et saute les angles termines.
+Pour prolonger une selection d'angles depuis son dernier champ sauvegarde: `ANGLES='-8 -6 4 10' END_TIME=3000 JOBS=4 bash AllresumePolar`.
+
+## Comment lire les polaires
+
+Le balayage garde la norme de la vitesse a `Uinf = 2.06 m/s` et le meme fluide; le Reynolds reste donc environ `98 100`. Dans les cas OpenFOAM, le profil est fixe et le vecteur de vitesse est tourne: `U = (Uinf*cos(alpha), Uinf*sin(alpha), 0)`. C'est une transformation de repere equivalente a incliner le profil dans un ecoulement fixe, si l'on conserve la meme incidence relative. Avec l'axe `x` de la corde oriente du bord d'attaque vers le bord de fuite et `y` vers le haut, le `+8 deg` du script correspond a relever le bord d'attaque d'environ 8 deg par rapport a l'ecoulement horizontal. Si les axes du montage ou le signe d'assiette sont definis autrement, verifier cette convention avant de reporter l'angle sur la mecanique du foil.
+
+- Sur `Cl(alpha)`, la courbe montre la portance qui augmente avec l'incidence positive. A `+8 deg`, `Cl = 0.6823`.
+- Sur `Cd(alpha)`, la trainee a `+8 deg` vaut `Cd = 0.03432`; elle est plus faible qu'a `+10 deg`, ou `Cd = 0.04257`.
+- Sur la polaire `Cl(Cd)`, le rapport `Cl/Cd` compare portance obtenue et trainee payee. A `+8 deg`, il vaut environ `19.88`; a `+10 deg`, il tombe a `18.70`.
+
+Parmi les incidences testees par pas de 2 deg, `+8 deg` donne donc le meilleur rapport portance/trainee pour une portance positive. `+10 deg` fournit plus de portance (`Cl = 0.796` contre `0.682`), mais au prix d'une trainee plus forte et d'une efficacite moindre. Le point optimal continu peut se trouver entre les angles echantillonnes; un balayage plus fin autour de `+7 a +9 deg` serait utile si l'assiette cible est a regler precisement.
+
+A vitesse fixee, la pression dynamique ne change pas: `q = 0.5*rho*Uinf^2 = 2121.8 Pa`. Pour une corde de 50 mm et une envergure ideale de 20 cm (`A = 0.01 m2`), les coefficients de `+8 deg` correspondent approximativement a `L = q*A*Cl = 14.5 N` et `D = q*A*Cd = 0.73 N`, soit `L/D = 19.9`. C'est une extrapolation de la section 2D: les effets d'extremite, le foil complet et les interactions avec la coque ne sont pas inclus.
+
+Le meilleur rapport `Cl/Cd` n'est pas necessairement l'assiette reelle a imposer dans toutes les situations. Il faut aussi satisfaire la portance requise par le bateau, et tenir compte des variations de vitesse, d'assiette de coque et de direction du courant. Les coefficients actuels restent exploratoires tant que la convergence stricte, la sensibilite du maillage et la transition ne sont pas validees.
 
 ## Ce qui reste a faire
 
-1. Diagnostiquer et recalculer -6 deg; son coefficient de trainee quasi nul n'est pas credible.
-2. Recalculer les angles derivants ou decroches avec davantage d'iterations et, si les forces restent instationnaires, un solveur transitoire et une moyenne temporelle.
-3. Etudier l'effet des 6 faces de faible poids sur `Cd` et comparer plusieurs maillages.
-4. Etudier la transition: le cas utilise `kOmegaSST` pleinement turbulent a `Re` proche de 98 000.
+1. Verifier les residus `SIMPLE` et le bilan de masse, qui ne sont pas tous sous les seuils prescrits.
+2. Etudier l'effet des 6 faces de faible poids sur `Cd` et comparer plusieurs maillages.
+3. Etudier la transition: le cas utilise `kOmegaSST` pleinement turbulent a `Re` proche de 98 000.
+4. Passer a un calcul instationnaire et comparer les moyennes temporelles si une incidence ne converge pas en stationnaire.
 
-La polaire est produite et disponible, mais reste exploratoire. La convergence, la sensibilite au maillage et le modele de transition doivent etre valides avant toute utilisation de dimensionnement ou comparaison experimentale.
+La polaire est produite et les forces sont stables selon le controle local, mais elle reste exploratoire. Cela ne signifie pas que les hypotheses sont fausses: elles ne sont simplement pas toutes confirmees par une validation numerique ou des donnees experimentales.
+
+### Pourquoi garder ces reserves
+
+- **Maillage:** un seul maillage est utilise et `checkMesh` signale six faces de faible poids d'interpolation dans le sillage, zone importante pour la trainee. Sans comparaison avec un maillage plus fin, on ne sait pas quelle part de `Cd` depend de ces cellules.
+- **Convergence:** les forces varient peu sur les 100 dernieres iterations, ce qui est encourageant, mais certains residus `SIMPLE` restent au-dessus de `1e-5`. La stabilite locale des coefficients ne prouve pas que toutes les equations sont strictement convergees.
+- **Transition et turbulence:** `kOmegaSST` est utilise en mode pleinement turbulent. A `Re` proche de 98 000, la transition peut modifier la trainee, le decollement et l'angle de decrochage. Le niveau de turbulence impose a l'entree (5 %) est egalement une valeur supposee, pas une mesure de l'ecoulement reel.
+- **Donnees physiques:** `Uinf`, `nu` et `rho` sont les valeurs retenues pour le cas. La vitesse peut etre fixee exactement comme hypothese d'etude, mais il faut confirmer que la viscosite correspond a la temperature et a la salinite reelles pour reproduire le Reynolds du foil.
+- **Perimetre 2D:** la polaire represente une section ideale; elle n'inclut ni les effets d'extremite de l'envergure de 20 cm, ni les interactions avec la coque ou une surface libre eventuelle.
+
+Une etude de maillage est donc la prochaine validation prioritaire, au moins aux angles `0`, `+8` et `+10 deg`, en comparant `Cl`, `Cd` et la structure du sillage sur deux ou trois resolutions. Un calcul instationnaire n'est pas automatiquement meilleur: il devient utile si les forces stationnaires ne se stabilisent pas ou si le sillage/decollement oscille. Dans ce cas, il faut eliminer le transitoire initial puis comparer les moyennes temporelles et leur dispersion. Les resultats stationnaires actuels permettent de reperer des tendances et le meilleur angle parmi ceux testes, pas de garantir une performance reelle.

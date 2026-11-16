@@ -105,7 +105,12 @@ def main() -> None:
         "window_samples",
     ]
     with OUTPUT_FILE.open("w", encoding="ascii", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=columns, extrasaction="ignore")
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=columns,
+            extrasaction="ignore",
+            lineterminator="\n",
+        )
         writer.writeheader()
         writer.writerows(summaries)
 

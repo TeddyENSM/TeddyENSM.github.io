@@ -89,6 +89,12 @@ bash AllresumePolar
 
 `AllresumePolar` utilise trois calculs en parallele par defaut; modifier ce nombre avec `JOBS=2 bash AllresumePolar` si la machine est moins puissante.
 
+Pour prolonger une selection d'angles depuis leur dernier champ sauvegarde, fixer `ANGLES`, `END_TIME` et `JOBS`, par exemple:
+
+```sh
+ANGLES='-8 -6 4 10' END_TIME=3000 JOBS=4 bash AllresumePolar
+```
+
 Pour regenerer le tableau CSV (valeurs finales et moyenne des 10 dernieres mesures, soit 100 iterations) et la figure:
 
 ```sh
@@ -100,25 +106,25 @@ Les fichiers produits sont `polaire_coefficients_v2406.csv` et `polaire_coeffici
 
 ## Resultats du balayage v2406
 
-Les onze incidences de -10 a +10 degres ont atteint le temps de calcul 1500 sans erreur fatale. Le tableau donne la moyenne de `Cd` et `Cl` sur les 100 dernieres iterations, plus informative qu'une seule valeur finale.
+Les onze incidences de -10 a +10 degres ont atteint au moins 1500 iterations sans erreur fatale. Les angles -8, -6, +4 et +10 ont ete prolonges jusqu'a 3000 iterations depuis leurs derniers champs sauvegardes. Le tableau donne la moyenne de `Cd` et `Cl` sur les 100 dernieres iterations.
 
 | Incidence | `Cd` moyen | `Cl` moyen | Forces sur les 100 dernieres iterations |
 | ---: | ---: | ---: | --- |
 | -10 deg | 0.041890 | -0.805588 | stable |
-| -8 deg | 0.036295 | -0.674393 | derivantes |
-| -6 deg | 0.001197 | -0.908442 | derivantes, `Cd` aberrant |
+| -8 deg | 0.035549 | -0.667635 | stable apres 3000 iterations |
+| -6 deg | 0.030438 | -0.520538 | stable apres 3000 iterations |
 | -4 deg | 0.027650 | -0.348893 | stable |
 | -2 deg | 0.025890 | -0.173907 | stable |
 | 0 deg | 0.025135 | 0.013181 | stable |
 | +2 deg | 0.025907 | 0.170528 | stable |
-| +4 deg | 0.027893 | 0.327659 | derivantes |
+| +4 deg | 0.027448 | 0.350746 | stable apres 3000 iterations |
 | +6 deg | 0.031036 | 0.509809 | stable |
 | +8 deg | 0.034323 | 0.682311 | stable |
-| +10 deg | 0.046423 | 0.757390 | derivantes |
+| +10 deg | 0.042573 | 0.795976 | stable apres 3000 iterations |
 
 Le statut `stable` est un controle pratique, pas un critere officiel de convergence: l'etendue de `Cd` sur la fenetre doit etre <= 1 % de sa moyenne et celle de `Cl` <= 0.01. Les residus `SIMPLE` ne satisfont pas tous le seuil de `1e-5` a 1500 iterations; atteindre `End` signifie que le temps impose est atteint, pas que la solution est convergee.
 
-Le resultat a -6 deg est manifestement suspect: `Cd` reste presque nul et a change de signe pendant le calcul, alors que les angles voisins donnent une trainee positive. Ne pas utiliser ce point dans une polaire physique. Les resultats a -8, +4 et +10 deg presentent aussi une derive mesurable des forces.
+La prolongation a 3000 iterations a corrige l'anomalie apparente a -6 deg: `Cd` est redevenu positif et la portance est proche de l'oppose du point +6 deg. Les quatre angles prolonges passent maintenant le controle indicatif de stabilite sur les 100 dernieres iterations. Cela ne remplace pas un controle de convergence des residus ni une etude de sensibilite au maillage.
 
 La symetrie est raisonnable entre -4 et +4 deg: `Cl` vaut environ -0.349 a -4 deg et +0.328 a +4 deg; les points a +/-2 deg sont egalement proches en valeur absolue. A 0 deg, `Cl` est proche de zero (0.013). La portance augmente ensuite jusqu'a environ 0.76 a +10 deg, mais les angles eleves restent sensibles a la convergence et au modele turbulent.
 
@@ -126,10 +132,9 @@ Le controle confirme une seule region, la topologie generale et les criteres de 
 
 ## Etapes de travail
 
-1. Reprendre le calcul a -6 deg depuis un champ convergent voisin ou avec une initialisation/amortissement plus robuste; verifier le signe et la valeur de `Cd`.
-2. Etendre les iterations ou passer a un solveur instationnaire (`pimpleFoam`) aux incidences ou les forces continuent de varier, puis calculer des moyennes temporelles.
-3. Generer un maillage raffine et comparer `Cd/Cl`, en eliminant si possible les 6 faces de faible poids dans le sillage.
-4. Etudier la sensibilite au modele de transition: le cas actuel est `kOmegaSST` pleinement turbulent, sans transition, alors que `Re` est proche de 98 000.
-5. Verifier les residus, le bilan de masse et la stabilite des forces avant de presenter une polaire physique finale.
+1. Verifier les residus `SIMPLE` et le bilan de masse jusqu'a convergence stricte, car certains residus restent au-dessus de `1e-5` a 3000 iterations.
+2. Generer un maillage raffine et comparer `Cd/Cl`, en eliminant si possible les 6 faces de faible poids dans le sillage.
+3. Etudier la sensibilite au modele de transition: le cas actuel est `kOmegaSST` pleinement turbulent, sans transition, alors que `Re` est proche de 98 000.
+4. Si les forces deviennent instationnaires a plus forte incidence, utiliser un solveur transitoire et comparer des moyennes temporelles.
 
-Le calcul est executable, mais la polaire actuelle reste exploratoire: le maillage conserve les 6 faces de faible poids d'interpolation, plusieurs incidences n'ont pas atteint le seuil de stabilite et le modele pleinement turbulent SST peut deplacer la transition et le decollement. Elle n'est pas directement equivalente a une polaire experimentale.
+Le calcul est executable et les forces des onze angles passent maintenant le controle indicatif de stabilite. La polaire reste exploratoire: certains residus depassent le seuil, le maillage conserve les 6 faces de faible poids d'interpolation, et le modele pleinement turbulent SST peut deplacer la transition et le decollement. Elle n'est pas directement equivalente a une polaire experimentale.
