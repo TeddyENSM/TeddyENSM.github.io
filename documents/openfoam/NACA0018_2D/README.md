@@ -59,28 +59,77 @@ python3 set_incidence.py 0
 python3 set_incidence.py 5
 ```
 
-La commande remplace l'entree par `(Uinf*cos(alpha), Uinf*sin(alpha), 0)`; le profil reste fixe. Commencer les essais par quelques incidences modestes autour de zero et verifier convergence et sensibilite du maillage avant d'etendre la plage. Ces deux champs ne suffisent pas encore a lancer `simpleFoam`: les proprietes du fluide et le modele de turbulence/transition restent a configurer. `kOmegaSSTLM` est disponible dans cette installation, mais il faudra encore verifier les champs auxiliaires et les conditions de paroi requis par ce modele.
+La commande impose `(Uinf*cos(alpha), Uinf*sin(alpha), 0)` sur les limites lointaines et tourne les directions de trainee et de portance de `forceCoeffs`; le profil reste fixe. Le cas est configure pour OpenFOAM v2406 avec `simpleFoam`, `kOmegaSST`, les champs `k`, `omega`, `nut`, les schemas et solveurs SIMPLE. Ce modele est pleinement turbulent et ne predit pas la transition laminaire-turbulente, ce qui limite l'interpretation a `Re` proche de 98 000. Le modele transitionnel `kOmegaSSTLM` n'est pas fourni par l'installation v2406 verifiee ici.
 
 ## Maillage initial
 
-Le premier maillage est genere avec Gmsh puis importe dans OpenFOAM. Il reprend la boite ci-dessus, avec une extrusion numerique de 1 mm et une seule cellule dans la direction z. Le raffinement est concentre sur le profil et dans le sillage; une couche limite prismatique commence a `1e-5 m`, avec une epaisseur totale de `1.5e-3 m` et un taux de croissance de 1.2. Ces parametres servent de point de depart et devront etre verifies par une etude de sensibilite et par les valeurs de `y+` apres configuration du modele.
+Le maillage est genere avec Gmsh puis importe dans OpenFOAM. Le script utilise Gmsh s'il est installe; sinon il reutilise le fichier MSH2 versionne `geometry/naca0018_2d.msh`. Il reprend la boite ci-dessus, avec une extrusion numerique de 1 mm et une seule cellule dans la direction z. Le raffinement est concentre sur le profil et dans le sillage; une couche limite prismatique commence a `1e-5 m`, avec une epaisseur totale de `1.5e-3 m` et un taux de croissance de 1.2. Ces parametres servent de point de depart et devront etre verifies par une etude de sensibilite et par les valeurs de `y+`.
 
 Depuis la racine du depot, lance le pipeline complet ainsi:
 
 ```sh
-sh documents/openfoam/NACA0018_2D/Allrun
+bash documents/openfoam/NACA0018_2D/Allrun
 ```
 
-Le script genere `geometry/naca0018_2d.msh`, l'importe dans `constant/polyMesh`, definit `frontAndBack` en `empty`, puis execute `checkMesh`. Pour afficher la grille, place-toi dans `documents/openfoam/NACA0018_2D`, lance `paraFoam`, clique sur `Apply` et choisis `Surface With Edges`.
+Le script genere ou reutilise le maillage, l'importe dans `constant/polyMesh`, definit le profil comme une paroi et `frontAndBack` en `empty`, puis execute `checkMesh`. Pour afficher la grille, place-toi dans `documents/openfoam/NACA0018_2D`, lance `paraFoam`, clique sur `Apply` et choisis `Surface With Edges`.
 
-Le controle confirme une seule region, la topologie generale et les criteres de determinant/orthogonalite. Il signale toutefois 6 faces de faible poids d'interpolation, toutes dans le sillage immediat, a environ 0.15-0.24 mm derriere le bord de fuite. Un raffinement local a augmente le maillage a environ 140 700 cellules sans supprimer ces six faces. Comme elles sont dans la zone qui influence la trainee, ne pas utiliser ce maillage pour annoncer une polaire finale avant d'avoir examine leur effet et verifie la convergence au raffinement. Les dictionnaires `system/fvSchemes` et `system/fvSolution` sont uniquement des fichiers minimaux pour les outils de maillage; le cas n'est pas encore pret a lancer un solveur.
+Pour preparer puis executer le balayage de `alpha_list.txt` sous OpenFOAM v2406, depuis ce dossier:
+
+```sh
+bash AllrunPolar
+```
+
+Les nouveaux cas sont crees dans `alpha_cases_v2406/`; les anciens `alpha_cases/` sont preserves. Le script refuse egalement d'ecraser un precedent `alpha_cases_v2406/`. Chaque cas conserve son journal `log.simpleFoam` et ses coefficients dans `postProcessing/forceCoeffs1/`.
+
+Pour reprendre un balayage interrompu depuis les derniers champs ecrits et sauter les angles deja termines:
+
+```sh
+bash AllresumePolar
+```
+
+`AllresumePolar` utilise trois calculs en parallele par defaut; modifier ce nombre avec `JOBS=2 bash AllresumePolar` si la machine est moins puissante.
+
+Pour regenerer le tableau CSV (valeurs finales et moyenne des 10 dernieres mesures, soit 100 iterations) et la figure:
+
+```sh
+python3 extract_polar.py
+python3 plot_polar.py
+```
+
+Les fichiers produits sont `polaire_coefficients_v2406.csv` et `polaire_coefficients_v2406.svg` (portance selon l'incidence, trainee selon l'incidence et polaire `Cl(Cd)`). Le CSV agrege aussi les fichiers de coefficients ecrits dans plusieurs sous-dossiers lors des reprises.
+
+## Resultats du balayage v2406
+
+Les onze incidences de -10 a +10 degres ont atteint le temps de calcul 1500 sans erreur fatale. Le tableau donne la moyenne de `Cd` et `Cl` sur les 100 dernieres iterations, plus informative qu'une seule valeur finale.
+
+| Incidence | `Cd` moyen | `Cl` moyen | Forces sur les 100 dernieres iterations |
+| ---: | ---: | ---: | --- |
+| -10 deg | 0.041890 | -0.805588 | stable |
+| -8 deg | 0.036295 | -0.674393 | derivantes |
+| -6 deg | 0.001197 | -0.908442 | derivantes, `Cd` aberrant |
+| -4 deg | 0.027650 | -0.348893 | stable |
+| -2 deg | 0.025890 | -0.173907 | stable |
+| 0 deg | 0.025135 | 0.013181 | stable |
+| +2 deg | 0.025907 | 0.170528 | stable |
+| +4 deg | 0.027893 | 0.327659 | derivantes |
+| +6 deg | 0.031036 | 0.509809 | stable |
+| +8 deg | 0.034323 | 0.682311 | stable |
+| +10 deg | 0.046423 | 0.757390 | derivantes |
+
+Le statut `stable` est un controle pratique, pas un critere officiel de convergence: l'etendue de `Cd` sur la fenetre doit etre <= 1 % de sa moyenne et celle de `Cl` <= 0.01. Les residus `SIMPLE` ne satisfont pas tous le seuil de `1e-5` a 1500 iterations; atteindre `End` signifie que le temps impose est atteint, pas que la solution est convergee.
+
+Le resultat a -6 deg est manifestement suspect: `Cd` reste presque nul et a change de signe pendant le calcul, alors que les angles voisins donnent une trainee positive. Ne pas utiliser ce point dans une polaire physique. Les resultats a -8, +4 et +10 deg presentent aussi une derive mesurable des forces.
+
+La symetrie est raisonnable entre -4 et +4 deg: `Cl` vaut environ -0.349 a -4 deg et +0.328 a +4 deg; les points a +/-2 deg sont egalement proches en valeur absolue. A 0 deg, `Cl` est proche de zero (0.013). La portance augmente ensuite jusqu'a environ 0.76 a +10 deg, mais les angles eleves restent sensibles a la convergence et au modele turbulent.
+
+Le controle confirme une seule region, la topologie generale et les criteres de determinant/orthogonalite. Il signale toutefois 6 faces de faible poids d'interpolation, toutes dans le sillage immediat, a environ 0.15-0.24 mm derriere le bord de fuite. Un raffinement local a augmente le maillage a environ 140 700 cellules sans supprimer ces six faces. Comme elles sont dans la zone qui influence la trainee, les coefficients de trainee doivent etre verifies par sensibilite au maillage. Le balayage ci-dessus est une premiere polaire numerique exploratoire, pas un resultat valide pour dimensionnement.
 
 ## Etapes de travail
 
-1. Verifier le contour normalise et les coordonnees a 50 mm.
-2. Construire et verifier la surface du profil, puis le domaine 2D.
-3. Creer le maillage de fond, raffiner le profil et controler les couches de paroi.
-4. Configurer les proprietes du fluide, le modele, les limites et les criteres de convergence.
-5. Valider un calcul a incidence nulle, puis produire la polaire sur plusieurs incidences.
+1. Reprendre le calcul a -6 deg depuis un champ convergent voisin ou avec une initialisation/amortissement plus robuste; verifier le signe et la valeur de `Cd`.
+2. Etendre les iterations ou passer a un solveur instationnaire (`pimpleFoam`) aux incidences ou les forces continuent de varier, puis calculer des moyennes temporelles.
+3. Generer un maillage raffine et comparer `Cd/Cl`, en eliminant si possible les 6 faces de faible poids dans le sillage.
+4. Etudier la sensibilite au modele de transition: le cas actuel est `kOmegaSST` pleinement turbulent, sans transition, alors que `Re` est proche de 98 000.
+5. Verifier les residus, le bilan de masse et la stabilite des forces avant de presenter une polaire physique finale.
 
-Les choix de maillage, de hauteur de premiere cellule, de modele de turbulence/transition et de convergence restent a etablir. A `Re` proche de 98 000, ces choix peuvent modifier fortement la transition et le decollement; une polaire RANS pleinement turbulente ne doit pas etre consideree automatiquement comme une polaire experimentale.
+Le calcul est executable, mais la polaire actuelle reste exploratoire: le maillage conserve les 6 faces de faible poids d'interpolation, plusieurs incidences n'ont pas atteint le seuil de stabilite et le modele pleinement turbulent SST peut deplacer la transition et le decollement. Elle n'est pas directement equivalente a une polaire experimentale.

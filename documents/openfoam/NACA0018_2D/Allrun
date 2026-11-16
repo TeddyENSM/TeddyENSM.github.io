@@ -1,10 +1,36 @@
-#!/bin/sh
-set -eu
+#!/usr/bin/env bash
+set -euo pipefail
 
 case_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cd "$case_dir"
 
-python3 geometry/generate_mesh.py
+if ! command -v gmshToFoam >/dev/null 2>&1; then
+	for foam_bashrc in "${WM_PROJECT_DIR:-}/etc/bashrc" /opt/openfoam2406/etc/bashrc /usr/lib/openfoam/openfoam2406/etc/bashrc; do
+		if [[ -f "$foam_bashrc" ]]; then
+			source "$foam_bashrc"
+			break
+		fi
+	done
+fi
+
+if ! command -v gmshToFoam >/dev/null 2>&1; then
+	echo "ERROR: gmshToFoam introuvable. Source le bashrc d'OpenFOAM v2406." >&2
+	exit 1
+fi
+
+if [[ "${WM_PROJECT_VERSION:-}" != "v2406" ]]; then
+	echo "WARNING: cas prevu pour OpenFOAM v2406; version active: ${WM_PROJECT_VERSION:-inconnue}." >&2
+fi
+
+if command -v "${GMSH_BIN:-gmsh}" >/dev/null 2>&1; then
+	GMSH_BIN="${GMSH_BIN:-gmsh}" python3 geometry/generate_mesh.py
+elif [[ -s geometry/naca0018_2d.msh ]]; then
+	echo "Gmsh indisponible; reutilisation du maillage MSH2 versionne."
+else
+	echo "ERROR: Gmsh absent et geometry/naca0018_2d.msh introuvable." >&2
+	exit 1
+fi
+
 gmshToFoam geometry/naca0018_2d.msh
 changeDictionary -dict system/changeDictionaryDict
 checkMesh -allTopology -allGeometry

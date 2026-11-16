@@ -10,11 +10,11 @@ application     simpleFoam;
 startFrom       startTime;
 startTime       0;
 stopAt          endTime;
-endTime         1;
+endTime         1500;
 deltaT          1;
 
 writeControl    timeStep;
-writeInterval   1;
+writeInterval   100;
 purgeWrite      0;
 writeFormat     ascii;
 writePrecision  8;

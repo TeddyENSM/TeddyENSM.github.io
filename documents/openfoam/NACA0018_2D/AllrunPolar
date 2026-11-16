@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$case_dir"
+
+if ! command -v simpleFoam >/dev/null 2>&1; then
+    for foam_bashrc in "${WM_PROJECT_DIR:-}/etc/bashrc" /opt/openfoam2406/etc/bashrc /usr/lib/openfoam/openfoam2406/etc/bashrc; do
+        if [[ -f "$foam_bashrc" ]]; then
+            source "$foam_bashrc"
+            break
+        fi
+    done
+fi
+
+if ! command -v simpleFoam >/dev/null 2>&1; then
+    echo "ERROR: simpleFoam introuvable. Source le bashrc d'OpenFOAM v2406." >&2
+    exit 1
+fi
+
+if [[ "${WM_PROJECT_VERSION:-}" != "v2406" ]]; then
+    echo "WARNING: cas prevu pour OpenFOAM v2406; version active: ${WM_PROJECT_VERSION:-inconnue}." >&2
+fi
+
+python3 prepare_alpha_cases.py
+
+failures=()
+for angle_dir in alpha_cases_v2406/alpha_*; do
+    [[ -d "$angle_dir" ]] || continue
+    echo "Running ${angle_dir}"
+    if ! (cd "$angle_dir" && simpleFoam > log.simpleFoam 2>&1); then
+        tail -n 60 "$angle_dir/log.simpleFoam" >&2
+        failures+=("$angle_dir")
+    fi
+done
+
+if ((${#failures[@]})); then
+    printf 'Failed cases:\n%s\n' "${failures[@]}" >&2
+    exit 1
+fi
+
+echo "Sweep complete. Coefficients are in each case's postProcessing/forceCoeffs1/."

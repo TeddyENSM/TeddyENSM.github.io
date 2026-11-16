@@ -30,11 +30,15 @@ boundaryField
     }
     top
     {
-        type            zeroGradient;
+        type            inletOutlet;
+        inletValue      uniform 30;
+        value           uniform 30;
     }
     bottom
     {
-        type            zeroGradient;
+        type            inletOutlet;
+        inletValue      uniform 30;
+        value           uniform 30;
     }
     frontAndBack
     {

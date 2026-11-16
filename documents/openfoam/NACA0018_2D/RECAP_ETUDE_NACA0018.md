@@ -15,7 +15,7 @@ Le travail est isole dans `documents/openfoam/NACA0018_2D`. L'ancien cas `run/ai
 | Vitesse `Uinf` | 2.06 m/s | Norme de la vitesse amont, gardee constante selon l'incidence |
 | Viscosite cinematique `nu` | `1.05e-6 m2/s` | Valeur de depart pour l'eau vers 20 degC; a confirmer selon le fluide reel |
 | Reynolds | environ 98 100 | `Re = Uinf*c/nu`; transition et decollement potentiellement sensibles |
-| Regime / solveur envisage | Incompressible stationnaire, `simpleFoam` | Hypothese de travail; aucun calcul n'a encore ete lance |
+| Regime / solveur de base | Incompressible stationnaire, `simpleFoam`, `kOmegaSST` | Demarrage valide sous OpenFOAM v2406; convergence physique non encore etablie |
 
 Pour une incidence `alpha`, le profil reste fixe et la vitesse est tournee: `Ux = Uinf*cos(alpha)`, `Uy = Uinf*sin(alpha)`. Cette convention est celle du script `set_incidence.py`.
 
@@ -35,10 +35,10 @@ L'image est `geometry/naca0018_50mm.png`. Les fichiers `.dat` et le PNG ne sont 
 
 La boite initiale est `x = [-0.50, 1.05] m`, `y = [-0.50, 0.50] m`. La geometrie est extrudee de 1 mm en `z`, avec une seule cellule dans cette direction; les deux faces correspondantes sont de type OpenFOAM `empty` pour representer le calcul 2D.
 
-Le maillage est genere avec Gmsh 4.12.1, converti avec `gmshToFoam`, puis controle avec `checkMesh`. Le script reproductible est `Allrun`:
+Le maillage MSH2 est genere avec Gmsh lorsqu'il est disponible; sinon `Allrun` reutilise `geometry/naca0018_2d.msh`, puis le convertit avec `gmshToFoam` et le controle avec `checkMesh`. Le patch `profile` est converti en type `wall`:
 
 ```sh
-sh documents/openfoam/NACA0018_2D/Allrun
+bash documents/openfoam/NACA0018_2D/Allrun
 ```
 
 Parametres principaux du maillage exploratoire:
@@ -62,10 +62,10 @@ Les patches du maillage sont `inlet`, `outlet`, `profile`, `top`, `bottom` et `f
 
 | Zone | Vitesse `U` | Pression `p` | Interpretation |
 | --- | --- | --- | --- |
-| Entree | `fixedValue`, vecteur oriente selon `alpha` | `zeroGradient` | Ecoulement incident |
-| Sortie | `zeroGradient` | `fixedValue uniform 0` | Pression de reference, pas vitesse nulle |
+| Entree | `freestreamVelocity`, vecteur oriente selon `alpha` | `zeroGradient` | Ecoulement incident |
+| Sortie | `freestreamVelocity` | `fixedValue uniform 0` | Pression de reference, pas vitesse nulle |
 | Profil | `noSlip` | `zeroGradient` | Profil fixe |
-| Haut et bas | `slip` | `zeroGradient` | Limites eloignees, pas des parois mobiles |
+| Haut et bas | `freestreamVelocity` | `zeroGradient` | Limites lointaines traversables selon l'incidence |
 | Faces avant/arriere | `empty` | `empty` | Direction hors-plan du cas 2D |
 
 Les champs sont dans `0/U` et `0/p`. Pour choisir une incidence, depuis le dossier du cas:
@@ -75,7 +75,7 @@ python3 set_incidence.py 0
 python3 set_incidence.py 5
 ```
 
-Le cas a ete remis a `0 deg`: `Uin = (2.06, 0, 0) m/s`. Le test a `5 deg` a donne `Uin = (2.052161, 0.179541, 0) m/s`, soit la meme norme de 2.06 m/s.
+Le cas racine est a `0 deg`: `Uin = (2.06, 0, 0) m/s`. Le test a `5 deg` a donne `Uin = (2.052161, 0.179541, 0) m/s`, soit la meme norme de 2.06 m/s. Le generateur tourne aussi `dragDir` et `liftDir` avec l'incidence.
 
 ## Visualisation dans ParaView
 
@@ -83,18 +83,19 @@ Le maillage est charge dans ParaView avec le marqueur `NACA0018_2D.foam` (lecteu
 
 ## Extraction des coefficients
 
-Le function object `forceCoeffs1` est configure dans `system/forceCoeffs` et inclus depuis `system/controlDict`. Il calcule les coefficients sur le patch `profile`, avec `rhoInf = 1000 kg/m3`, `magUInf = 2.06 m/s`, `lRef = 0.05 m` et `Aref = 5e-5 m2`, soit la corde de 0.05 m multipliee par l'extrusion de 0.001 m. Les directions configurees sont `dragDir = (1 0 0)` et `liftDir = (0 1 0)`, avec le centre de moment `CofR = (0.025 0 0)`.
+Le function object `forceCoeffs1` est configure dans `system/forceCoeffs` et inclus depuis `system/controlDict`. Il calcule les coefficients sur le patch `profile`, avec `rhoInf = 1000 kg/m3`, `magUInf = 2.06 m/s`, `lRef = 0.05 m` et `Aref = 5e-5 m2`, soit la corde de 0.05 m multipliee par l'extrusion de 0.001 m. Le script tourne `dragDir` et `liftDir` selon l'incidence; le centre de moment est `CofR = (0.025 0 0)`.
 
-Les dictionnaires ont ete lus sans erreur par `foamDictionary`. Cela valide leur syntaxe de dictionnaire, mais pas encore leur execution avec le solveur ni les valeurs physiques obtenues. La surface de reference est maintenant coherente avec l'envergure extrudee de 1 mm. Les directions de portance et de trainee restent fixes dans le repere global; leur convention devra etre confirmee avant d'interpreter une polaire selon l'incidence.
+Les dictionnaires ont ete lus par `foamDictionary`, et le demarrage de `simpleFoam` a ete valide sous OpenFOAM v2406. Le balayage complet de -10 a +10 deg (pas de 2 deg) a ensuite atteint 1500 iterations par incidence sans erreur fatale. Le CSV `polaire_coefficients_v2406.csv` et la figure `polaire_coefficients_v2406.svg` sont generes dans le dossier du cas. Les coefficients sont calcules avec la surface de reference coherente `Aref = 5e-5 m2`.
 
-Le calcul de validation a 0 deg et le balayage d'angles n'ont pas ete lances. Ils sont reportes jusqu'a la reprise du travail sur la tour de l'ecole; il faudra y transferer ou synchroniser le dossier de cas et verifier la version et l'environnement OpenFOAM avant execution.
+Les valeurs du tableau sont des moyennes des 10 dernieres mesures (100 iterations). Les forces sont stables selon le controle indicatif pour -10, -4, -2, 0, +2, +6 et +8 deg; elles derivent pour -8, +4 et +10 deg. Le point -6 deg est manifestement suspect (`Cd` moyen environ 0.0012, avec changement de signe pendant le calcul). Tous les cas ont atteint le temps final, mais les residus `SIMPLE` ne respectent pas tous le seuil `1e-5`; ces calculs ne constituent donc pas une polaire validee.
+
+Le balayage peut etre repris avec `JOBS=3 bash AllresumePolar`; il reprend les derniers champs enregistres et saute les angles termines.
 
 ## Ce qui reste a faire
 
-1. Examiner les 6 faces de faible poids et comparer des maillages; ne pas figer la trainee sur le seul maillage actuel.
-2. Definir les proprietes du fluide et choisir le modele de turbulence/transition. `kOmegaSSTLM` existe dans l'installation OpenFOAM v2412, mais ses champs auxiliaires et conditions de paroi ne sont pas encore configures.
-3. Completer `0/` avec les champs du modele choisi et remplacer les dictionnaires minimaux `system/fvSchemes` et `system/fvSolution` par une configuration de calcul valide.
-4. Verifier la convention des directions de `forceCoeffs` pour chaque incidence, puis valider son execution et les sorties `Cl`/`Cd`.
-5. Sur la tour, valider un calcul a incidence nulle (maillage, residus, bilan et stabilite des forces), puis lancer un balayage d'angles et verifier la convergence de `Cl` et `Cd` avec le maillage.
+1. Diagnostiquer et recalculer -6 deg; son coefficient de trainee quasi nul n'est pas credible.
+2. Recalculer les angles derivants ou decroches avec davantage d'iterations et, si les forces restent instationnaires, un solveur transitoire et une moyenne temporelle.
+3. Etudier l'effet des 6 faces de faible poids sur `Cd` et comparer plusieurs maillages.
+4. Etudier la transition: le cas utilise `kOmegaSST` pleinement turbulent a `Re` proche de 98 000.
 
-Aucune simulation de fluide ni polaire n'a encore ete calculee. Le maillage et les conditions `U/p` constituent une base de preparation, pas un resultat aerodynamique valide.
+La polaire est produite et disponible, mais reste exploratoire. La convergence, la sensibilite au maillage et le modele de transition doivent etre valides avant toute utilisation de dimensionnement ou comparaison experimentale.

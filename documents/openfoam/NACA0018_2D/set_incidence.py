@@ -24,6 +24,10 @@ def main():
     angle_radians = math.radians(angle_degrees)
     velocity_x = SPEED * math.cos(angle_radians)
     velocity_y = SPEED * math.sin(angle_radians)
+    drag_x = math.cos(angle_radians)
+    drag_y = math.sin(angle_radians)
+    lift_x = -math.sin(angle_radians)
+    lift_y = math.cos(angle_radians)
 
     initial_dir = CASE_DIR / "0"
     initial_dir.mkdir(exist_ok=True)
@@ -38,18 +42,19 @@ def main():
 }}
 
 dimensions      [0 1 -1 0 0 0 0];
-internalField   uniform (0 0 0);
+internalField   uniform ({velocity_x:.10g} {velocity_y:.10g} 0);
 
 boundaryField
 {{
     inlet
     {{
-        type            fixedValue;
-        value           uniform ({velocity_x:.10g} {velocity_y:.10g} 0);
+        type            freestreamVelocity;
+        freestreamValue uniform ({velocity_x:.10g} {velocity_y:.10g} 0);
     }}
     outlet
     {{
-        type            zeroGradient;
+        type            freestreamVelocity;
+        freestreamValue uniform ({velocity_x:.10g} {velocity_y:.10g} 0);
     }}
     profile
     {{
@@ -57,11 +62,13 @@ boundaryField
     }}
     top
     {{
-        type            slip;
+        type            freestreamVelocity;
+        freestreamValue uniform ({velocity_x:.10g} {velocity_y:.10g} 0);
     }}
     bottom
     {{
-        type            slip;
+        type            freestreamVelocity;
+        freestreamValue uniform ({velocity_x:.10g} {velocity_y:.10g} 0);
     }}
     frontAndBack
     {{
@@ -71,9 +78,35 @@ boundaryField
 """,
         encoding="ascii",
     )
+    force_coeffs_file = CASE_DIR / "system" / "forceCoeffs"
+    force_coeffs_file.write_text(
+        f"""forceCoeffs1
+{{
+    type            forceCoeffs;
+    libs            (forces);
+    writeControl    timeStep;
+    writeInterval   10;
+    log             true;
+
+    patches         (profile);
+    p               p;
+    U               U;
+    rho             rhoInf;
+    rhoInf          1000;
+    liftDir         ({lift_x:.10g} {lift_y:.10g} 0);
+    dragDir         ({drag_x:.10g} {drag_y:.10g} 0);
+    CofR            (0.025 0 0);
+    pitchAxis       (0 0 1);
+    magUInf         {SPEED};
+    lRef            0.05;
+    Aref            5e-5;
+}}
+""",
+        encoding="ascii",
+    )
     print(
         f"alpha={angle_degrees:g} deg: Uin=({velocity_x:.6f}, "
-        f"{velocity_y:.6f}, 0) m/s; wrote {velocity_file}"
+        f"{velocity_y:.6f}, 0) m/s; wrote {velocity_file} and {force_coeffs_file}"
     )
 
 

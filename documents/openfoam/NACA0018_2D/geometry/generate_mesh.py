@@ -2,6 +2,8 @@
 """Generate an exploratory 2D NACA 0018 mesh with Gmsh."""
 
 from pathlib import Path
+import os
+import shutil
 import subprocess
 
 
@@ -135,8 +137,13 @@ def write_geo(points):
 def main():
     points = read_profile()
     write_geo(points)
+    gmsh_command = os.environ.get("GMSH_BIN", "gmsh")
+    if not shutil.which(gmsh_command):
+        raise SystemExit(
+            f"Gmsh introuvable ({gmsh_command}). Installe Gmsh ou utilise le maillage MSH2 existant."
+        )
     subprocess.run(
-        ["gmsh", str(GEO_FILE), "-v", "2", "-3", "-format", "msh2", "-o", str(MESH_FILE)],
+        [gmsh_command, str(GEO_FILE), "-v", "2", "-3", "-format", "msh2", "-o", str(MESH_FILE)],
         check=True,
         cwd=HERE,
     )

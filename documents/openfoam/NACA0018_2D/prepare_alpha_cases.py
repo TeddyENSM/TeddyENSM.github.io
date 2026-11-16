@@ -10,7 +10,7 @@ from subprocess import run
 
 CASE_DIR = Path(__file__).resolve().parent
 ANGLE_FILE = CASE_DIR / "alpha_list.txt"
-OUTPUT_DIR = CASE_DIR / "alpha_cases"
+OUTPUT_DIR = CASE_DIR / "alpha_cases_v2406"
 
 
 def default_angles():
@@ -26,13 +26,21 @@ def read_angles():
 def main():
     angles = read_angles()
     if OUTPUT_DIR.exists():
-        shutil.rmtree(OUTPUT_DIR)
+        raise SystemExit(
+            f"Refusing to overwrite existing cases in {OUTPUT_DIR}. "
+            "Archive or rename that directory before preparing a new sweep."
+        )
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     for angle in angles:
         label = f"alpha_{int(angle) if float(angle).is_integer() else angle}deg"
         dest = OUTPUT_DIR / label
-        shutil.copytree(CASE_DIR, dest, dirs_exist_ok=False, ignore=shutil.ignore_patterns("alpha_cases", "__pycache__"))
+        shutil.copytree(
+            CASE_DIR,
+            dest,
+            dirs_exist_ok=False,
+            ignore=shutil.ignore_patterns("alpha_cases", "alpha_cases_v2406", "__pycache__"),
+        )
         run(["python3", "set_incidence.py", str(angle)], cwd=dest, check=True)
         print(f"Prepared {dest} for alpha={angle} deg")
 

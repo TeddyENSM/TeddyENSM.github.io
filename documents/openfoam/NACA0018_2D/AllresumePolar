@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$case_dir"
+
+if ! command -v simpleFoam >/dev/null 2>&1; then
+    for foam_bashrc in "${WM_PROJECT_DIR:-}/etc/bashrc" /opt/openfoam2406/etc/bashrc /usr/lib/openfoam/openfoam2406/etc/bashrc; do
+        if [[ -f "$foam_bashrc" ]]; then
+            source "$foam_bashrc"
+            break
+        fi
+    done
+fi
+
+if ! command -v simpleFoam >/dev/null 2>&1 || ! command -v foamListTimes >/dev/null 2>&1; then
+    echo "ERROR: simpleFoam/foamListTimes introuvable. Source le bashrc d'OpenFOAM v2406." >&2
+    exit 1
+fi
+
+if [[ "${WM_PROJECT_VERSION:-}" != "v2406" ]]; then
+    echo "WARNING: cas prevu pour OpenFOAM v2406; version active: ${WM_PROJECT_VERSION:-inconnue}." >&2
+fi
+
+jobs=${JOBS:-3}
+if [[ ! "$jobs" =~ ^[1-9][0-9]*$ ]]; then
+    echo "ERROR: JOBS must be a positive integer." >&2
+    exit 1
+fi
+
+failures=()
+batch_pids=()
+batch_dirs=()
+
+wait_batch() {
+    local index
+    for index in "${!batch_pids[@]}"; do
+        if ! wait "${batch_pids[$index]}"; then
+            failures+=("${batch_dirs[$index]}")
+        fi
+    done
+    batch_pids=()
+    batch_dirs=()
+}
+
+run_case() {
+    local angle_dir=$1
+    local log_file=$2
+    if ! (cd "$angle_dir" && simpleFoam > "${log_file##*/}" 2>&1); then
+        tail -n 60 "$log_file" >&2
+        return 1
+    fi
+}
+
+for angle in -10 -8 -6 -4 -2 0 2 4 6 8 10; do
+    angle_label=${angle}deg
+    angle_dir="alpha_cases_v2406/alpha_${angle_label}"
+    [[ -d "$angle_dir" ]] || continue
+
+    latest_time=$(foamListTimes -case "$angle_dir" -latestTime -withZero | tail -n 1)
+    if [[ -z "$latest_time" ]]; then
+        echo "Skipping ${angle_dir}: no saved time found." >&2
+        failures+=("$angle_dir (no saved time)")
+        continue
+    fi
+
+    if awk -v latest="$latest_time" 'BEGIN { exit !(latest >= 1500) }'; then
+        echo "Skipping ${angle_dir}: already reached time ${latest_time}."
+        continue
+    fi
+
+    coefficient_file="$angle_dir/postProcessing/forceCoeffs1/0/coefficient.dat"
+    if [[ -f "$coefficient_file" ]]; then
+        backup_file="${coefficient_file}.before_resume"
+        [[ -e "$backup_file" ]] || cp "$coefficient_file" "$backup_file"
+        awk -v latest="$latest_time" '/^#/ || NF == 0 { print; next } $1 + 0 <= latest + 1e-9 { print }' \
+            "$coefficient_file" > "${coefficient_file}.tmp"
+        mv "${coefficient_file}.tmp" "$coefficient_file"
+    fi
+
+    foamDictionary "$angle_dir/system/controlDict" -entry startFrom -set latestTime >/dev/null
+    log_file="$angle_dir/log.resume.from_${latest_time}_$(date +%Y%m%d_%H%M%S).log"
+    echo "Resuming ${angle_dir} from time ${latest_time} (log: ${log_file##*/})"
+    run_case "$angle_dir" "$log_file" &
+    batch_pids+=("$!")
+    batch_dirs+=("$angle_dir")
+    if ((${#batch_pids[@]} >= jobs)); then
+        wait_batch
+    fi
+done
+
+if ((${#batch_pids[@]})); then
+    wait_batch
+fi
+
+if ((${#failures[@]})); then
+    printf 'Failed cases:\n%s\n' "${failures[@]}" >&2
+    exit 1
+fi
+
+echo "Sweep complete. Coefficients are in each case's postProcessing/forceCoeffs1/."
